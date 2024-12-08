@@ -2,7 +2,7 @@
 
 ## Tabla de contenidos
 1. [Objetivo](#objetivo)
-2. [Obtener los valores de \( \xi \), \( \omega_0 \), \( \omega_d \)](#obtener-los-valores-de--xi----omega_0----omega_d-)
+2. [Obtener los valores de $\xi$, $\omega_0$, $\omega_d$](#obtener-los-valores-de--xi----omega_0----omega_d-)
 3. [Calcular la cantidad de muestras por ciclo](#calcular-la-cantidad-de-muestras-por-ciclo)
 4. [Determinar la ubicación de los polos deseados](#determinar-la-ubicación-de-los-polos-deseados)
 5. [Diseñar al menos dos controladores digitales](#diseñar-al-menos-dos-controladores-digitales)
