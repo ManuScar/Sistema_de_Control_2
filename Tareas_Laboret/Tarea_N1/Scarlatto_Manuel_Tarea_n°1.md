@@ -5,7 +5,8 @@
 2. [A lazo abierto](#a-lazo-abierto)
 3. [Análisis para el sistema discreto](#análisis-para-el-sistema-discreto)
 4. [A lazo cerrado con realimentación unitaria](#a-lazo-cerrado-con-realimentación-unitaria)
-5. [Conclusiones](#conclusiones)
+5. [Código de Matlab](#código_de_matlab)
+6. [Conclusiones](#conclusiones)
    
 ---
 
@@ -333,6 +334,48 @@ Al aumentar 10 veces el tiempo de muestreo original, los polos del sistema discr
 
 ---
 
+## Código de Matlab
+
+```
+%Tarea N-1
+%Profesor: Laboret, Sergio
+%Alumno: Scarlatto, Manuel
+%Materia: Sistema de Control 2
+%%Lazo Abierto
+clear all; close all; clc;
+%Datos de la Tarea
+z1=-10; p1=-2; p2=-1;K=5; Tm=0.30;
+%Funciones de Transferencia
+G=zpk([z1],[p1 p2],[K])    %FT de tiempo continuo G(s)
+Gd=c2d(G,Tm,'zho')         %FT de tiempo discreto Gd(s)
+Gd1=c2d(G,10*Tm,'zho')     %FT de tiempo discreto Gd1(s) - Aumento 10 veces el Tm
+%Graficas de las FT
+figure('Name', 'Mapa de Polos-Zeros de FT tiempo Continuo'), pzmap(G);        
+figure('Name', 'Mapa de Polos-Zeros de FT tiempo Discreto'), pzmap(Gd);
+figure('Name', 'Mapa de Polos-Zeros de FT tiempo Discreto (10xTm)'), pzmap(Gd1);
+%Graficas de los escalones
+figure('Name', 'Respuesta al Escalon Tiempo Continuo'), step(G);
+figure('Name', 'Respuesta al Escalon Tiempo Discreto'), step(Gd);
+%%Sistema Discreto
+Kp=dcgain(Gd), F=feedback(Gd,1), figure('Name', 'Respuesta al Escalon'), step(F) %Constante de error de posición
+t=0:Tm:100*Tm; %Genera Rampa
+figure('Name', 'Rampa de entrada'), lsim(F,t,t);
+%%Lazo cerrado con realimentación unitaria
+figure('Name', 'Lugar de Raices - FT Tiempo Continuo'),rlocus(G);
+figure('Name', 'Lugar de Raices - FT Tiempo Discreto'),rlocus(Gd);
+figure('Name', 'Lugar de Raices - FT Tiempo Discreto (10xTm)'),rlocus(Gd1);
+```
+
+---
+
 ## Conclusiones
+
+En este trabajo se aplicaron los conceptos fundamentales de los sistemas de control digital, abordando tanto el análisis de sistemas discretos como continuos. Se logró obtener las funciones de transferencia en ambos dominios y analizar su comportamiento mediante herramientas como mapas de polos y ceros, respuestas transitorias y análisis de estabilidad.
+
+Los resultados obtenidos confirmaron que el sistema estudiado es estable, tanto en lazo abierto como en lazo cerrado, y que la discretización conserva las características esenciales del sistema continuo, siempre que se utilice un tiempo de muestreo adecuado. Además, el análisis mostró que el tiempo de muestreo seleccionado permite representar correctamente las dinámicas del sistema sin alterar significativamente su desempeño.
+
+En términos de error, el sistema mostró buen desempeño ante entradas escalón, con un error en estado estacionario reducido, pero presentó divergencia ante entradas tipo rampa debido a su naturaleza de tipo 0. Esto evidencia la necesidad de incorporar integradores o estrategias de control adicionales para mejorar su capacidad de seguimiento en escenarios más exigentes.
+
+Este análisis permite comprender la relación entre los parámetros de diseño, las características dinámicas y la estabilidad en sistemas digitales, proporcionando una base sólida para abordar problemas más complejos en controles discretos.
 
 ---
