@@ -54,18 +54,22 @@ Utilizando el comando 'zpk()' obtengo la función de transferencia en tiempo con
 
 ### Código del Matlab
 
+```
 %%Lazo Abierto
 clear all; close all; clc;
 %Datos de la Tarea
 z1=-10; p1=-2; p2=-1;K=5; Tm=0.30;
 %Funciones de Transferencia
 G=zpk([z1],[p1 p2],[K])    %FT de tiempo continuo G(s)
+```
 
 ### Función de Transferencia para Tiempo Continuo
 
+```
       5 (s+10)
 G =  -----------
      (s+2) (s+1)
+```
 
 - Hallar la FT discreta de lazo abierto G_D (s) del sistema de la figura con ZOH a la entrada y el tiempo de muestreo asignado Tm.
 
@@ -73,6 +77,7 @@ G =  -----------
 
 ### Código del Matlab
 
+```
 %%Lazo Abierto
 clear all; close all; clc;
 %Datos de la Tarea
@@ -80,15 +85,19 @@ z1=-10; p1=-2; p2=-1;K=5; Tm=0.30;
 %Funciones de Transferencia
 G=zpk([z1],[p1 p2],[K])    %FT de tiempo continuo G(s)
 Gd=c2d(G,Tm,'zho')         %FT de tiempo discreto Gd(s)
+```
 
 ### Función de Transferencia para Tiempo Discreto
- 
+
+```
        2.6394 (z+0.1076)
 Gd = ---------------------
      (z-0.7408) (z-0.5488)
+```
 
 ### Dibujar el mapa de polos y ceros del sistema continuo el discreto 
 
+```
 %%Lazo Abierto
 clear all; close all; clc;
 %Datos de la Tarea
@@ -99,6 +108,7 @@ Gd=c2d(G,Tm,'zho')         %FT de tiempo discreto Gd(s)
 %Graficas de las FT
 figure('Name', 'Mapa de Polos-Zeros de FT tiempo Continuo'), pzmap(G);        
 figure('Name', 'Mapa de Polos-Zeros de FT tiempo Discreto'), pzmap(Gd);
+```
 
 ### Gráfica Tiempo Continuo
 
