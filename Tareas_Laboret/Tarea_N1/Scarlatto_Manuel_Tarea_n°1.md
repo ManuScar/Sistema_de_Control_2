@@ -71,6 +71,8 @@ G =  -----------
      (s+2) (s+1)
 ```
 
+Podemos observar que es un sistema de segundo orden, ya que el denominador tiene dos factores lineales (s+2) y (s+1). En cuanto a la estabilidad, un sistema es estable si todos sus polos se encuentrasn en el semiplano izquierdo del plano complejo, y como se observa ambos polos poseén parte real negativa, por lo que podemos decir que el sistema es estable.
+
 - Hallar la FT discreta de lazo abierto $G_D$(s) del sistema de la figura con ZOH a la entrada y el tiempo de muestreo asignado Tm.
 
 ![FT_Tiempo_Discreto](https://github.com/user-attachments/assets/68681016-9542-4f2a-9aa7-96eb03a68aff)
@@ -95,6 +97,8 @@ Gd = ---------------------
      (z-0.7408) (z-0.5488)
 ```
 
+En este caso, la función de transferencia discreta mantiene la misma estructura que la continua, pero adaptada al dominio de 𝑧, con polos y ceros específicos que determinan el comportamiento del sistema. En el caso de los sistemas discretos, la estabilidad se determina por la ubicación de los polos en el círculo unitario del plano z, por lo que podemos decir que el sistema es estable, dado que los polos tienen valores <1.
+
 ### Dibujar el mapa de polos y ceros del sistema continuo el discreto 
 
 ```
@@ -112,11 +116,13 @@ figure('Name', 'Mapa de Polos-Zeros de FT tiempo Discreto'), pzmap(Gd);
 
 ### Gráfica Tiempo Continuo
 
-![G](https://github.com/user-attachments/assets/eec8aa96-17cb-480d-9715-b2d27b63a384)
+![G](https://github.com/user-attachments/assets/9d878ec6-e813-4a85-be98-c28379658c04)
+
 
 ### Gráfica Tiempo Discreto
 
-![Gd](https://github.com/user-attachments/assets/43873d23-a396-4f0c-ab20-c08b727c098d)
+![Gd](https://github.com/user-attachments/assets/d6322c66-42d9-45fe-a908-1b41d1019a82)
+
 
 ---
 
