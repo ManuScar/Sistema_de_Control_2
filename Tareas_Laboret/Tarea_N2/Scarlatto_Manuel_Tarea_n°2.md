@@ -34,7 +34,7 @@ Datos indicados para la realización del trabajo:
 
 $\xi = \frac{-\ln(S/100)}{\sqrt{\pi^2 + \ln(S/100)^2}}=\frac{-\ln(5/100)}{\sqrt{(\pi^2+\ln(5/100)^2)}} = 0.6901$
 
-$\omega_o = \frac{4}{\xi*t_R(2\%)} = \frac{4}{0.6901*4} = 1.4491$
+$ω₀ = \frac{4}{\xi*t_R(2\%)} = \frac{4}{0.6901*4} = 1.4491$
 
 $\omega_d = \omega_o*\sqrt{1-\xi^2} = 1.0487$
 
