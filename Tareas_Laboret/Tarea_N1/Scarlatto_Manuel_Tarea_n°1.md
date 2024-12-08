@@ -1,10 +1,10 @@
 # Tarea N°1 : Sistema de Control II
 
 ## Tabla de contenidos
-1. [Objetivo](#consigna-1)
-2. [A lazo abierto](#consigna-2)
-3. [Análisis para el sistema discreto](#consigna-3)
-4. [A lazo cerrado con realimentación unitaria](#consigna-4)
+1. [Objetivo](#objetivo)
+2. [A lazo abierto](#a-lazo-abierto)
+3. [Análisis para el sistema discreto](#análisis-para-el-sistema-discreto)
+4. [A lazo cerrado con realimentación unitaria](#a-lazo-cerrado-con-realimentación-unitaria)
    
 ---
 
@@ -63,13 +63,50 @@ G=zpk([z1],[p1 p2],[K])    %FT de tiempo continuo G(s)
 
 ### Función de Transferencia para Tiempo Continuo
 
-G =
+      5 (s+10)
+G =  -----------
+     (s+2) (s+1)
+
+- Hallar la FT discreta de lazo abierto G_D (s) del sistema de la figura con ZOH a la entrada y el tiempo de muestreo asignado Tm.
+
+![FT_Tiempo_Discreto](https://github.com/user-attachments/assets/68681016-9542-4f2a-9aa7-96eb03a68aff)
+
+### Código del Matlab
+
+%%Lazo Abierto
+clear all; close all; clc;
+%Datos de la Tarea
+z1=-10; p1=-2; p2=-1;K=5; Tm=0.30;
+%Funciones de Transferencia
+G=zpk([z1],[p1 p2],[K])    %FT de tiempo continuo G(s)
+Gd=c2d(G,Tm,'zho')         %FT de tiempo discreto Gd(s)
+
+### Función de Transferencia para Tiempo Discreto
  
-   5 (s+10)
-  -----------
-  (s+2) (s+1)
- 
-Continuous-time zero/pole/gain model.
+       2.6394 (z+0.1076)
+Gd = ---------------------
+     (z-0.7408) (z-0.5488)
+
+### Dibujar el mapa de polos y ceros del sistema continuo el discreto 
+
+%%Lazo Abierto
+clear all; close all; clc;
+%Datos de la Tarea
+z1=-10; p1=-2; p2=-1;K=5; Tm=0.30;
+%Funciones de Transferencia
+G=zpk([z1],[p1 p2],[K])    %FT de tiempo continuo G(s)
+Gd=c2d(G,Tm,'zho')         %FT de tiempo discreto Gd(s)
+%Graficas de las FT
+figure('Name', 'Mapa de Polos-Zeros de FT tiempo Continuo'), pzmap(G);        
+figure('Name', 'Mapa de Polos-Zeros de FT tiempo Discreto'), pzmap(Gd);
+
+### Gráfica Tiempo Continuo
+
+![G](https://github.com/user-attachments/assets/eec8aa96-17cb-480d-9715-b2d27b63a384)
+
+### Gráfica Tiempo Discreto
+
+![Gd](https://github.com/user-attachments/assets/43873d23-a396-4f0c-ab20-c08b727c098d)
 
 ---
 
