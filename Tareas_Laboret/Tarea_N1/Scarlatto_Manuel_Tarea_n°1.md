@@ -5,6 +5,7 @@
 2. [A lazo abierto](#a-lazo-abierto)
 3. [Análisis para el sistema discreto](#análisis-para-el-sistema-discreto)
 4. [A lazo cerrado con realimentación unitaria](#a-lazo-cerrado-con-realimentación-unitaria)
+5. [Conclusiones](#conclusiones)
    
 ---
 
@@ -233,7 +234,7 @@ Esta función evidencia un comportamiento de segundo orden, con un tiempo de ase
 
 ![Rta_Step_LC](https://github.com/user-attachments/assets/3e9c4b9e-ff00-453e-ae3c-e45a05f9ee5a)
 
-## Verificar error ante una rampa de entrada, ¿ converge o diverge? Explique la causa
+### Verificar error ante una rampa de entrada, ¿ converge o diverge? Explique la causa
 
 - Código del Matlab
 
@@ -301,5 +302,37 @@ La gráfica muestra el lugar de raíces del sistema discreto $G_D(s)$, con los p
 - Ganancia Crítica de Estabilidad:
   - En el sistema discreto, la estabilidad depende de que los polos permanezcan dentro del círculo unitario.
   - Existe una ganancia crítica aproximadamente de 1.14, según los datos mostrados en la gráfica.
+
+### ¿ Que ocurre con la estabilidad relativa si se aumenta 10 veces el tiempo de muestreo original ?
+
+- Código del Matlab
+
+```
+%Datos de la Tarea
+z1=-10; p1=-2; p2=-1;K=5; Tm=0.30;
+%Funciones de Transferencia
+G=zpk([z1],[p1 p2],[K])    %FT de tiempo continuo G(s)
+Gd=c2d(G,Tm,'zho')         %FT de tiempo discreto Gd(s)
+Gd1=c2d(G,10*Tm,'zho')     %FT de tiempo discreto Gd1(s) - Aumento 10 veces el Tm
+%%Sistema Discreto
+Kp=dcgain(Gd), F=feedback(Gd,1), figure('Name', 'Respuesta al Escalon'), step(F) %Constante de error de posición
+t=0:Tm:100*Tm; %Genera Rampa
+figure('Name', 'Rampa de entrada'), lsim(F,t,t);
+%%Lazo cerrado con realimentación unitaria
+figure('Name', 'Lugar de Raices - FT Tiempo Continuo'),rlocus(G)
+figure('Name', 'Lugar de Raices - FT Tiempo Discreto'),rlocus(Gd)
+figure('Name', 'Lugar de Raices - FT Tiempo Discreto (10xTm)'),rlocus(Gd1);
+```
+
+Al aumentar 10 veces el tiempo de muestreo original, los polos del sistema discreto $G_{D1}(s)$ se mueven más cerca del origen (cero) del plano z, en lugar de acercarse al borde del círculo unitario.
+
+- Ganancia Crítica de Estabilidad:
+  - En el sistema discreto $G_{D1}(s)$, la estabilidad depende de que los polos permanezcan dentro del círculo unitario.
+  - El punto marcado corresponde a una ganancia crítica aproximada de 0.048.
+  - Si la ganancia supera este valor, uno o más polos saldrán del círculo unitario, provocando la inestabilidad del sistema.
+
+---
+
+## Conclusiones
 
 ---
