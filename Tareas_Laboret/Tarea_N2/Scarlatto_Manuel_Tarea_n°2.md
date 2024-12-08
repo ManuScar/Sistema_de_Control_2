@@ -2,7 +2,7 @@
 
 ## Tabla de contenidos
 1. [Objetivo](#objetivo)
-2. [Obtener los valores de ξ, ω₀, $ω_d$](#obtener-los-valores-de-ξ-ω₀-$ω_d$)
+2. [Obtener los valores de ξ, ω₀, ω_d](#obtener-los-valores-de-ξ-ω₀-ω_d)
 3. [Calcular la cantidad de muestras por ciclo](#calcular-la-cantidad-de-muestras-por-ciclo)
 4. [Determinar la ubicación de los polos deseados](#determinar-la-ubicación-de-los-polos-deseados)
 5. [Diseñar al menos dos controladores digitales](#diseñar-al-menos-dos-controladores-digitales)
@@ -28,15 +28,15 @@ Datos indicados para la realización del trabajo:
 
 ---
 
-## Obtener los valores de ξ, ω₀, $ω_d$
+## Obtener los valores de ξ, ω₀, ω_d
 
 - Calculamos ξ, ω₀, $ω_d$ manualmente
 
 $\xi = \frac{-\ln(S/100)}{\sqrt{\pi^2 + \ln(S/100)^2}}=\frac{-\ln(5/100)}{\sqrt{(\pi^2+\ln(5/100)^2)}} = 0.6901$
 
-$\omega_0 = \frac{4}{\xi*t_R(2\%)} = \frac{4}{0.6901*4} = 1.4491$
+$\omega_o = \frac{4}{\xi*t_R(2\%)} = \frac{4}{0.6901*4} = 1.4491$
 
-$\omega_d = \omega_0*\sqrt{1-\xi^2} = 1.0487$
+$\omega_d = \omega_o*\sqrt{1-\xi^2} = 1.0487$
 
 - Código de Matlab
 
@@ -71,5 +71,19 @@ Wd = 1.0487
     - Por lo tanto, las muestras por ciclo son:
 
       $m = \frac{t_d}{T_m} = \frac{5.9914}{0.30} = 19.97 $
+
+---
+
+## Determinar la ubicación de los polos deseados
+
+- Mediante la equivalencia de planos s y z determinar la ubicación de los polos deseados en el plano z
+
+$r = |z_{1,2}| = e^{-\xi*\omega_o*T_m} = 0.7408$
+
+$\Omega = ∠z_{1,2} = \pm \omega_d*T_m = \pm 0.3146 = 18.0258 ° $
+
+Pasando a coordenadas rectangulares
+
+$polo_{deseado}= 0.7045 \pm j 0.2289$
 
 ---
