@@ -260,3 +260,46 @@ La constante de error de velocidad $K_V$ para este sistema es 0, lo que confirma
 La divergencia del error ante una rampa es una característica inherente a los sistemas tipo 0. Para mejorar este comportamiento, sería necesario modificar la estructura del controlador, por ejemplo, agregando un integrador para convertir el sistema a tipo 1.
 
 ---
+
+## A lazo cerrado con realimentación unitaria
+
+### Graficar el lugar de raíces del sistema continuo G(s) y del discreto $G_D$(s) indicando las ganancias criticas de estabilidad (si las hubiera)
+
+- Código del Matlab
+
+```
+%Datos de la Tarea
+z1=-10; p1=-2; p2=-1;K=5; Tm=0.30;
+%Funciones de Transferencia
+G=zpk([z1],[p1 p2],[K])    %FT de tiempo continuo G(s)
+Gd=c2d(G,Tm,'zho')         %FT de tiempo discreto Gd(s)
+Gd1=c2d(G,10*Tm,'zho')     %FT de tiempo discreto Gd1(s) - Aumento 10 veces el Tm
+%%Sistema Discreto
+Kp=dcgain(Gd), F=feedback(Gd,1), figure('Name', 'Respuesta al Escalon'), step(F) %Constante de error de posición
+t=0:Tm:100*Tm; %Genera Rampa
+figure('Name', 'Rampa de entrada'), lsim(F,t,t);
+%%Lazo cerrado con realimentación unitaria
+figure('Name', 'Lugar de Raices - FT Tiempo Continuo'),rlocus(G)
+figure('Name', 'Lugar de Raices - FT Tiempo Discreto'),rlocus(Gd)
+```
+
+- Lugar de Raices - FT Tiempo Continuo
+
+![LR_FT_TC](https://github.com/user-attachments/assets/6e0beb70-c1a9-4ef4-b746-66822e0e4a2d)
+
+La gráfica muestra el lugar de raíces del sistema continuo G(s), con los polos iniciales en -2 y -1, y el cero en -10.
+- Ganancia Crítica de Estabilidad:
+  - En el sistema continuo, la estabilidad depende de que los polos permanezcan en el semiplano izquierdo (eje real negativo).
+  - Ganancia Crítica: Infinita, ya que los polos siempre permanecen en el semiplano izquierdo.
+
+- Lugar de Raices - FT Tiempo Discreto
+
+![LR_FT_TD](https://github.com/user-attachments/assets/b58ed474-1b88-4db0-a636-202408acb0ad)
+
+La gráfica muestra el lugar de raíces del sistema discreto $G_D(s)$, con los polos iniciales dentro del círculo unitario en el plano z.
+
+- Ganancia Crítica de Estabilidad:
+  - En el sistema discreto, la estabilidad depende de que los polos permanezcan dentro del círculo unitario.
+  - Existe una ganancia crítica aproximadamente de 1.14, según los datos mostrados en la gráfica.
+
+---
