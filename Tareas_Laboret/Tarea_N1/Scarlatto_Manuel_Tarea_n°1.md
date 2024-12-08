@@ -71,7 +71,7 @@ G =  -----------
      (s+2) (s+1)
 ```
 
-- Hallar la FT discreta de lazo abierto G_D (s) del sistema de la figura con ZOH a la entrada y el tiempo de muestreo asignado Tm.
+- Hallar la FT discreta de lazo abierto $G_D$(s) del sistema de la figura con ZOH a la entrada y el tiempo de muestreo asignado Tm.
 
 ![FT_Tiempo_Discreto](https://github.com/user-attachments/assets/68681016-9542-4f2a-9aa7-96eb03a68aff)
 
