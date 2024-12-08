@@ -123,6 +123,56 @@ figure('Name', 'Mapa de Polos-Zeros de FT tiempo Discreto'), pzmap(Gd);
 
 ![Gd](https://github.com/user-attachments/assets/d6322c66-42d9-45fe-a908-1b41d1019a82)
 
+- ¿Qué ocurre con el mapa si se multiplica por 10 el periodo de muestreo?
+
+En este caso, los polos y ceros de $G_(D1)$(z) se desplazan, lo que indica que al aumentar el tiempo de muestreo, el sistema pierde resolución en la representación discreta, y sus características dinámicas podrían volversa más lentas o con menor precisión en comparación con el caso de $G_D$(z). Este tipo de cambios refleja cómo el tiempo de muestreo influye directamente en la respuesta de un sistema discreto.
+
+```
+%%Lazo Abierto
+clear all; close all; clc;
+%Datos de la Tarea
+z1=-10; p1=-2; p2=-1;K=5; Tm=0.30;
+%Funciones de Transferencia
+G=zpk([z1],[p1 p2],[K])    %FT de tiempo continuo G(s)
+Gd=c2d(G,Tm,'zho')         %FT de tiempo discreto Gd(s)
+Gd1=c2d(G,10*Tm,'zho')     %FT de tiempo discreto Gd1(s) - Aumento 10 veces el Tm
+%Graficas de las FT
+figure('Name', 'Mapa de Polos-Zeros de FT tiempo Continuo'), pzmap(G);        
+figure('Name', 'Mapa de Polos-Zeros de FT tiempo Discreto'), pzmap(Gd);
+figure('Name', 'Mapa de Polos-Zeros de FT tiempo Discreto (10xTm)'), pzmap(Gd1);
+```
+``` 
+        22.809 (z+0.0389)
+Gd1 = ------------------------
+      (z-0.04979) (z-0.002479)
+```
+
+![Gd_10xTm](https://github.com/user-attachments/assets/1c337014-0472-42e4-8bd2-f4fffc4fe608)
+
+- Obtener la respuesta al escalon del sistema discreto y determinar si es estable
+
+```
+%%Lazo Abierto
+clear all; close all; clc;
+%Datos de la Tarea
+z1=-10; p1=-2; p2=-1;K=5; Tm=0.30;
+%Funciones de Transferencia
+G=zpk([z1],[p1 p2],[K])    %FT de tiempo continuo G(s)
+Gd=c2d(G,Tm,'zho')         %FT de tiempo discreto Gd(s)
+Gd1=c2d(G,10*Tm,'zho')     %FT de tiempo discreto Gd1(s) - Aumento 10 veces el Tm
+%Graficas de las FT
+figure('Name', 'Mapa de Polos-Zeros de FT tiempo Continuo'), pzmap(G);        
+figure('Name', 'Mapa de Polos-Zeros de FT tiempo Discreto'), pzmap(Gd);
+figure('Name', 'Mapa de Polos-Zeros de FT tiempo Discreto (10xTm)'), pzmap(Gd1);
+%Graficas de los escalones
+figure('Name', 'Respuesta al Escalon Tiempo Continuo'), step(G);
+figure('Name', 'Respuesta al Escalon Tiempo Discreto'), step(Gd);
+```
+![Rta_Step_Tiempo_Continuo](https://github.com/user-attachments/assets/61c68cd0-148a-4ddb-843f-7b75b156954d)
+
+![Rta_Step_Tiempo_Discreto](https://github.com/user-attachments/assets/d41a3fa6-6673-4a61-b7f3-5157038cc125)
+
+La respuesta al escalón muestra que el sistema es estable, alcanzando un valor de amplitud constante sin oscilaciones ni sobrepasos. Al comparar ambas respuestas, se observa una forma semejante, lo que indica que la discretización conserva las características dinámicas esenciales del sistema continuo. Por lo tanto, podemos decir que el sistema es estable.
 
 ---
 
