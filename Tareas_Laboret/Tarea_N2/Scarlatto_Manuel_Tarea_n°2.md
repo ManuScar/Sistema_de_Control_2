@@ -34,7 +34,7 @@ Datos indicados para la realización del trabajo:
 
 $\xi = \frac{-\ln(S/100)}{\sqrt{\pi^2 + \ln(S/100)^2}}=\frac{-\ln(5/100)}{\sqrt{(\pi^2+\ln(5/100)^2)}} = 0.6901$
 
-$ω₀ = \frac{4}{\xi*t_R(2\%)} = \frac{4}{0.6901*4} = 1.4491$
+ω₀ = 4 / (ξ × tᵣ(2%)) = 4 / (0.6901 × 4) = 1.4491
 
 $\omega_d = \omega_o*\sqrt{1-\xi^2} = 1.0487$
 
@@ -72,8 +72,26 @@ Wd = 1.0487
 
       $m = \frac{t_d}{T_m} = \frac{5.9914}{0.30} = 19.97 $
 
----
+- Código de Matlab
 
+```
+%Datos de la Tarea
+z1=-10; p1=-2; p2=-1; K=5; S=5; Tr=4; Tm=0.30;
+%Obtener los valores de Z, Wo y Wd
+Xi=(-log(S/100))/sqrt(pi^(2)+log(S/100)^(2))
+Wo=4/(Xi*Tr)
+Wd=Wo*sqrt(1-Xi^2)
+Td=2*pi/Wd
+%Cantidad de Muestras por ciclo de la frecuencia amortiguada Wd
+m=Td/Tm
+```
+
+- Resultado obtenido
+
+```
+m = 19.9715
+```
+---
 ## Determinar la ubicación de los polos deseados
 
 - Mediante la equivalencia de planos s y z determinar la ubicación de los polos deseados en el plano z
@@ -85,5 +103,100 @@ $\Omega = ∠z_{1,2} = \pm \omega_d*T_m = \pm 0.3146 = 18.0258 ° $
 Pasando a coordenadas rectangulares
 
 $polo_{deseado}= 0.7045 \pm j 0.2289$
+
+- Código de Matlab
+
+```
+%Datos de la Tarea
+z1=-10; p1=-2; p2=-1; K=5; S=5; Tr=4; Tm=0.30;
+%Obtener los valores de Z, Wo y Wd
+Xi=(-log(S/100))/sqrt(pi^(2)+log(S/100)^(2))
+Wo=4/(Xi*Tr)
+Wd=Wo*sqrt(1-Xi^2)
+Td=2*pi/Wd
+%Cantidad de Muestras por ciclo de la frecuencia amortiguada Wd
+m=Td/Tm
+%Equivalencias de planos s y z
+r=exp(-Xi*Wo*Tm)
+Omega=(Wd*Tm)*(180/pi)
+%Coordenadas rectangulares
+real_part=r*cos(Omega)
+imag_part=r*sin(Omega)
+R=real_part+j*imag_part
+```
+- Resultados obtenidos
+```
+
+r = 0.7408
+
+Omega = 18.0256
+
+real_part = 0.5033
+
+imag_part = -0.5436
+
+R = 0.5033 - 0.5436i
+```
+
+---
+
+## Diseñar al menos dos controladores digitales
+
+- Seleccionar y diseñar al menos 2 controladores digitales en serie (PI,PD, PID o Adelanto) que cumplan (para los polos dominantes) las especificaciones dadas mediante SISOTOOL , en caso de que no se cumplan analizar el porque
+
+- Código de Matlab
+
+```
+%Datos de la Tarea
+z1=-10; p1=-2; p2=-1; K=5; S=5; Tr=4; Tm=0.30;
+%Obtener los valores de Z, Wo y Wd
+Xi=(-log(S/100))/sqrt(pi^(2)+log(S/100)^(2))
+Wo=4/(Xi*Tr)
+Wd=Wo*sqrt(1-Xi^2)
+Td=2*pi/Wd
+%Cantidad de Muestras por ciclo de la frecuencia amortiguada Wd
+m=Td/Tm
+%Equivalencias de planos s y z
+r=exp(-Xi*Wo*Tm)
+Omega=(Wd*Tm)*(180/pi)
+%Coordenadas rectangulares
+real_part=r*cos(Omega)
+imag_part=r*sin(Omega)
+R=real_part+j*imag_part
+%Funciones de Transferencias, Sisotool
+G=zpk([z1],[p1 p2],[K])    %FT de tiempo continuo G(s)
+Gd=c2d(G,Tm,'zho')         %FT de tiempo discreto Gd(s)
+sisotool(Gd)
+```
+
+- Función de transferencia tiempo continuo G(s)
+
+``` 
+     5 (s+10)
+G = -----------
+    (s+2) (s+1)
+```
+
+- Función de transferencia tiempo discreto $G_D$(s)
+
+``` 
+       2.6394 (z+0.1076)
+Gd = ---------------------
+     (z-0.7408) (z-0.5488)
+```
+
+- Respuesta al escalon del sistema discreto ($G_D$)
+
+![alt text](<Imagenes Tarea 2/Respuesta_al_Escalon.jpg>)
+
+- Lugar de Raices del sistema discreto ($G_D$)
+
+![alt text](<Imagenes Tarea 2/Lugar_de_Raices.jpg>)
+
+- Diagrama de Bode del sistema discreto ($G_D$)
+
+![alt text](<Imagenes Tarea 2/Diagrama_de_Bode.jpg>)
+
+En la respuesta al escalon podemos observar que el sistema es estable, pero se observa que el sobrepaso es del 174 % y el requerido es del 4 %. En cuanto al LR se puede observar que el sistema se encuentra dentro del circulo unitario. 
 
 ---
