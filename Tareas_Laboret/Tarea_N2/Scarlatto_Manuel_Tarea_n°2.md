@@ -32,11 +32,11 @@ Datos indicados para la realización del trabajo:
 
 - Calculamos ξ, ω₀, $ω_d$ manualmente
 
-$\xi = \frac{-\ln(S/100)}{\sqrt{\pi^2 + \ln(S/100)^2}}=\frac{-\ln(5/100)}{\sqrt{(\pi^2+\ln(5/100)^2)}} = 0.6901$
+$$\xi = \frac{-\ln(S/100)}{\sqrt{\pi^2 + \ln(S/100)^2}}=\frac{-\ln(5/100)}{\sqrt{(\pi^2+\ln(5/100)^2)}} = 0.6901$$
 
-ω₀ = 4 / (ξ × tᵣ(2%)) = 4 / (0.6901 × 4) = 1.4491
+$$ω₀ = 4 / (ξ × tᵣ(2\%)) = 4 / (0.6901 × 4) = 1.4491$$
 
-$\omega_d = \omega_o*\sqrt{1-\xi^2} = 1.0487$
+$$\omega_d = \omega_o*\sqrt{1-\xi^2} = 1.0487$$
 
 - Código de Matlab
 
@@ -66,11 +66,11 @@ Wd = 1.0487
 
     - Para ello, primero obtenemos $t_d$
 
-      $t_d = \frac{2\pi}{\omega_d} = \frac{2\pi}{1.0487} = 5.9914$ 
+      $$t_d = \frac{2\pi}{\omega_d} = \frac{2\pi}{1.0487} = 5.9914$$
 
     - Por lo tanto, las muestras por ciclo son:
 
-      $m = \frac{t_d}{T_m} = \frac{5.9914}{0.30} = 19.97 $
+      $$m = \frac{t_d}{T_m} = \frac{5.9914}{0.30} = 19.97 $$
 
 - Código de Matlab
 
@@ -96,13 +96,13 @@ m = 19.9715
 
 - Mediante la equivalencia de planos s y z determinar la ubicación de los polos deseados en el plano z
 
-$r = |z_{1,2}| = e^{-\xi*\omega_o*T_m} = 0.7408$
+$$r = |z_{1,2}| = e^{-\xi*\omega_o*T_m} = 0.7408$$
 
-$\Omega = ∠z_{1,2} = \pm \omega_d*T_m = \pm 0.3146 = 18.0258 ° $
+$$\Omega = ∠z_{1,2} = \pm \omega_d*T_m = \pm 0.3146 = 18.0258 ° $$
 
 Pasando a coordenadas rectangulares
 
-$polo_{deseado}= 0.7045 \pm j 0.2289$
+$$polo_{deseado}= 0.7045 \pm j 0.2289$$
 
 - Código de Matlab
 
@@ -198,5 +198,84 @@ Gd = ---------------------
 ![alt text](<Imagenes Tarea 2/Diagrama_de_Bode.jpg>)
 
 En la respuesta al escalon podemos observar que el sistema es estable, pero se observa que el sobrepaso es del 174 % y el requerido es del 4 %. En cuanto al LR se puede observar que el sistema se encuentra dentro del circulo unitario. 
+
+Se diseña entonces un controlador PI, dado que el sistema no poseé un polo en 1, por lo tanto se fija un polo en 1 y se agrega un cero ajustable. Luego se genera un controlador en adelanto y se compararan los resultados.
+
+Entonces, siguiendo los requerimientos planteados en un comienzo:
+
+$$\xi = 0.6901$$
+$$t_R(2\%) = 4$$
+
+![alt text](<Imagenes Tarea 2/Lugar_de_Raices_Xi_Tr.jpg>)
+
+### Controlador PI
+
+Con los parametros ya fijados, se agrega el polo en 1 y el cero ajustable, se ajusta el cero para que la ganacia pueda tomar el valor que pase a traves de la intersección. Luego se ajusta la ganancia al punto exacto de la intersección.
+
+El controlador PI tiene la forma:
+
+$$C(z)=K*\frac{z-c}{z-1}$$ 
+
+![alt text](<Imagenes Tarea 2/Compensador.jpg>)
+
+![alt text](<Imagenes Tarea 2/Lugar_de_Raices_PI.jpg>)
+
+![alt text](<Imagenes Tarea 2/Respuesta_al_Escalon_PI.jpg>)
+
+Como podemos observar, con el cero ajustable se cancelo el polo en 0.74 y luego se ajusto la ganancia a la altura de las intersecciones. Podemos ver a su vez, como la respuesta al escalon mejor y se amolda a los parametros solicitados.
+
+Ahora se exporta el compensador C y se contruye el sistema a lazo cerrado.
+
+```
+    0.042987 (z-0.744)
+C = ------------------
+         (z-1)
+```
+
+- Código de Matlab
+
+```
+C %muestra el compensador importado de sisotool
+F=feedback(C*Gd,1) % sistema de lazo cerrado
+pole(F)
+zero(F)
+pzmap(F)
+step(F) % respuesta al escalon
+```
+
+- Función a Lazo Cerrado
+
+```
+      0.11346 (z-0.744) (z+0.1076)
+F = ----------------------------------
+    (z-0.7474) (z^2 - 1.429z + 0.5561)
+```
+
+- Respuesta al escalon - Sistema a Lazo Cerrado
+
+![alt text](<Imagenes Tarea 2/Respuesta_al_Escalon_PI_LC.jpg>)
+
+Se observa que el sistema se asemeja al calculado.
+
+```
+pole(F)
+
+ans =
+
+   0.7144 + 0.2140i
+   0.7144 - 0.2140i
+   0.7474 + 0.0000i
+```
+
+```
+zero(F)
+
+ans =
+
+    0.7440
+   -0.1076
+```
+
+![alt text](<Imagenes Tarea 2/Pole_Zero_Map_LC.jpg>)
 
 ---
