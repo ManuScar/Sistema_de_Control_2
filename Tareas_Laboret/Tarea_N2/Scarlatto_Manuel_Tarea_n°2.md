@@ -214,7 +214,7 @@ Con los parametros ya fijados, se agrega el polo en 1 y el cero ajustable, se aj
 
 El controlador PI tiene la forma:
 
-$$C(z)=K*\frac{z-c}{z-1}$$ 
+$$C(z)=K*\frac{z-c}{z-1}; K=K_p+K_i; c=\frac{K_p}{K_p+K_i}$$ 
 
 ![alt text](<Imagenes Tarea 2/Compensador.jpg>)
 
@@ -277,5 +277,59 @@ ans =
 ```
 
 ![alt text](<Imagenes Tarea 2/Pole_Zero_Map_LC.jpg>)
+
+Recordando la función de transferencia del controlador PI:
+
+$$C(z)=K*\frac{z-c}{z-1}; K=K_p+K_i; c=\frac{K_p}{K_p+K_i}$$ 
+
+Tenemos que 
+
+$$C(z)=K*\frac{z-c}{z-1}=0.042987*\frac{z-0.744}{z-1}$$
+
+Donde, 
+
+$$K=K_p+K_i=0.042987$$ 
+
+y 
+
+$$c=\frac{K_p}{K_p+K_i}=0.744$$
+
+Teniendo dos ecuaciones con dos incognitas, resolviendo las mismas, se obtienen los valores de $K_p$ y $K_i$.
+
+$$K_p=0.031982; K_i=0.011004$$
+
+- Simulación en Simulink
+
+Una vez obtenidos los valores del controlador, pasamos a simular el sistema en Simulink, a partir del archivo 'PID_digital_tarea.slx'.
+
+![alt text](<Imagenes Tarea 2/Simulink_Vacio.jpg>)
+
+Una vez abierto el archivo, ponemos en cero el $K_d$ ya que no es un controlador derivativo, y cargamos los valores previamente calculados a $K_p$ y $K_i$:
+
+![alt text](<Imagenes Tarea 2/Parametros_K.jpg>)
+
+Luego configuramos la funcion de transferencia:
+
+![alt text](<Imagenes Tarea 2/Parametros_FT.jpg>)
+
+Se configura el Step y los ZOH.
+
+Al simular el sistema, obtenemos los siguientes resultados:
+
+- Salida del Sistema con Controlador PI
+
+![alt text](<Imagenes Tarea 2/Simulink_Out.jpg>)
+
+- Gráfica del Error
+
+![alt text](<Imagenes Tarea 2/Simulink_Out_Error.jpg>)
+
+- Gráfica de la acción integradora
+
+![alt text](<Imagenes Tarea 2/Simulink_Out_Int.jpg>)
+
+- Gráfica de la acción proporcional
+
+![alt text](<Imagenes Tarea 2/Simulink_Out_Prop.jpg>)
 
 ---
