@@ -34,7 +34,7 @@ Datos indicados para la realización del trabajo:
 
 $$\xi = \frac{-\ln(S/100)}{\sqrt{\pi^2 + \ln(S/100)^2}}=\frac{-\ln(5/100)}{\sqrt{(\pi^2+\ln(5/100)^2)}} = 0.6901$$
 
-$$ω₀ = 4 / (ξ × tᵣ(2\%)) = 4 / (0.6901 × 4) = 1.4491$$
+$$ω₀ = 4 / (ξ * tᵣ(2\%)) = 4 / (0.6901 * 4) = 1.4491$$
 
 $$\omega_d = \omega_o*\sqrt{1-\xi^2} = 1.0487$$
 
@@ -100,10 +100,6 @@ $$r = |z_{1,2}| = e^{-\xi*\omega_o*T_m} = 0.7408$$
 
 $$\Omega = ∠z_{1,2} = \pm \omega_d*T_m = \pm 0.3146 = 18.0258 ° $$
 
-Pasando a coordenadas rectangulares
-
-$$polo_{deseado}= 0.7045 \pm j 0.2289$$
-
 - Código de Matlab
 
 ```
@@ -119,24 +115,16 @@ m=Td/Tm
 %Equivalencias de planos s y z
 r=exp(-Xi*Wo*Tm)
 Omega=(Wd*Tm)*(180/pi)
-%Coordenadas rectangulares
-real_part=r*cos(Omega)
-imag_part=r*sin(Omega)
-R=real_part+j*imag_part
 ```
 - Resultados obtenidos
 ```
-
 r = 0.7408
 
 Omega = 18.0256
-
-real_part = 0.5033
-
-imag_part = -0.5436
-
-R = 0.5033 - 0.5436i
 ```
+Pasando a coordenadas rectangulares
+
+$$polo_{deseado}= 0.7045 \pm j 0.2289$$
 
 ---
 
@@ -204,7 +192,7 @@ Se diseña entonces un controlador PI, dado que el sistema no poseé un polo en 
 Entonces, siguiendo los requerimientos planteados en un comienzo:
 
 $$\xi = 0.6901$$
-$$t_R(2\%) = 4$$
+$$t_R(2 \%) = 4$$
 
 ![alt text](<Imagenes Tarea 2/Lugar_de_Raices_Xi_Tr.jpg>)
 
@@ -227,9 +215,9 @@ Como podemos observar, con el cero ajustable se cancelo el polo en 0.74 y luego 
 Ahora se exporta el compensador C y se contruye el sistema a lazo cerrado.
 
 ```
-    0.042987 (z-0.744)
-C = ------------------
-         (z-1)
+     0.045631 (z-0.7408)
+C = --------------------
+          (z-1)
 ```
 
 - Código de Matlab
@@ -246,9 +234,9 @@ step(F) % respuesta al escalon
 - Función a Lazo Cerrado
 
 ```
-      0.11346 (z-0.744) (z+0.1076)
+      0.12044 (z-0.7408) (z+0.1076)
 F = ----------------------------------
-    (z-0.7474) (z^2 - 1.429z + 0.5561)
+    (z-0.7408) (z^2 - 1.428z + 0.5618)
 ```
 
 - Respuesta al escalon - Sistema a Lazo Cerrado
@@ -262,9 +250,9 @@ pole(F)
 
 ans =
 
-   0.7144 + 0.2140i
-   0.7144 - 0.2140i
-   0.7474 + 0.0000i
+   0.7142 + 0.2274i
+   0.7142 - 0.2274i
+   0.7408 + 0.0000i
 ```
 
 ```
@@ -272,7 +260,7 @@ zero(F)
 
 ans =
 
-    0.7440
+    0.7408
    -0.1076
 ```
 
@@ -284,25 +272,29 @@ $$C(z)=K*\frac{z-c}{z-1}; K=K_p+K_i; c=\frac{K_p}{K_p+K_i}$$
 
 Tenemos que 
 
-$$C(z)=K*\frac{z-c}{z-1}=0.042987*\frac{z-0.744}{z-1}$$
+$$C(z)=K*\frac{z-c}{z-1}=0.045631*\frac{z-0.7408}{z-1}$$
 
 Donde, 
 
-$$K=K_p+K_i=0.042987$$ 
+$$K=K_p+K_i=0.045631$$ 
 
 y 
 
-$$c=\frac{K_p}{K_p+K_i}=0.744$$
+$$c=\frac{K_p}{K_p+K_i}=0.7408$$
 
 Teniendo dos ecuaciones con dos incognitas, resolviendo las mismas, se obtienen los valores de $K_p$ y $K_i$.
 
-$$K_p=0.031982; K_i=0.011004$$
+$$K_p=c*K=0.7408*0.045631=0.0338$$
+
+$$K_i=K-K_p=0.045631-0.0338=0.0118$$
+
+$$K_p=0.0338; K_i=0.0118$$
 
 - Simulación en Simulink
 
 Una vez obtenidos los valores del controlador, pasamos a simular el sistema en Simulink, a partir del archivo 'PID_digital_tarea.slx'.
 
-![alt text](<Imagenes Tarea 2/Simulink_Vacio.jpg>)
+![alt text](<Imagenes Tarea 2/Simulink_Diagrama.jpg>)
 
 Una vez abierto el archivo, ponemos en cero el $K_d$ ya que no es un controlador derivativo, y cargamos los valores previamente calculados a $K_p$ y $K_i$:
 
