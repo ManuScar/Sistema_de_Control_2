@@ -7,7 +7,7 @@ B = 0;              % Coeficiente de fricción (despreciable)
 K_i = 6.49e-3;      % Constante de torque (N·m/A)
 K_m = 6.53e-3;      % Constante de fuerza contraelectromotriz (V·s/rad)
 T_L = 0;
-% T_L = 1.41e-3;            % Torque de carga (N·m)
+%T_L = 1.41e-3;            % Torque de carga (N·m)
 v_a = 12;           % Voltaje de entrada (V)
 
 % Condiciones iniciales
@@ -170,7 +170,7 @@ fprintf("Valor máximo de theta(t): %.4f rad\n", max(theta_vec));
 %% TRABAJO SOBRE LA HOJA DE EXCEL   FUNCIONA 
 
 % Cargar los datos del archivo Excel (Hoja 1)
-datos=xlsread('Curvas_Medidas_Motor_2025_v.xls')
+datos=xlsread('Curvas_Medidas_Motor_2025.xls')
 
 % Extraer columnas relevantes
 t = datos(:,1);        % Columna 1: tiempo

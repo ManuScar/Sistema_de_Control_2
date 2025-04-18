@@ -78,12 +78,12 @@ plot(datos(:,1),datos(:,3));%grafico tension(3er columna de la tabla) y tiempo
 ii=0; % for t_inic=10:15
 ii=ii+1;
 
-t1=0.0104; %Es el punto 0.012 pero le resto 0.01 que es el tiempo muerto		
-y_t1=6.74485212495084;% valor para el tiempo 0.011
-t2=0.0105; 	
-y_2t2=7.73007776921785;% valor para el tiempo 0.0102
-t3=0.0106; 
-y_3t3=8.53059508686858;% valor para el tiempo 0.0103
+t1=0.011; %Es el punto 0.012 pero le resto 0.01 que es el tiempo muerto		
+y_t1=10.4878492641469;  %valor para el tiempo 0.011
+t2=0.012; 	
+y_2t2=11.8103532847096;%valor para el tiempo 0.0102
+t3=0.013; 
+y_3t3=11.9762154157203;%valor para el tiempo 0.0103
 
 StepAmplitude = 1;
 y_end=12;
