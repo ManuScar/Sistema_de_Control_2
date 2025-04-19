@@ -27,139 +27,188 @@ B = [1/L; 0];
 c = [0 1];  % Vc salida
 D = 0;
 
-sys1 = ss(A, B, c, D);  % Modelo en espacio de estados
-figure(1)
+% Modelo en espacio de estados
+sys1 = ss(A, B, c, D); 
 y = lsim(sys1, u, t);
-plot(t, y);
-title('Vc');
+
+sys2 = ss(A, B, c2, D); 
+[yout, ~] = lsim(sys2, u, t);
+
+% Crear una única figura con 3 subgráficas
+figure;
+
+% Subplot 1: Vc
+subplot(3, 1, 1);
+plot(t, y, 'b');
+title('Tensión en el capacitor Vc');
+xlabel('Tiempo [s]');
+ylabel('Vc [V]');
 grid on;
-hold on;
 
-figure(2)
-plot(t, u);
-title('Entrada, u');
-hold on;
+% Subplot 2: Entrada
+subplot(3, 1, 2);
+plot(t, u, 'k');
+title('Entrada u(t)');
+xlabel('Tiempo [s]');
+ylabel('Voltaje [V]');
+grid on;
 
-% Matrices para corriente como salida
-c2 = [1 0];  % Corriente salida
-sys2 = ss(A, B, c2, D);
-figure
-[yout, x] = lsim(sys2, u, t);
-plot(x, yout, 'r');
-title('Corriente');
-hold on;
+% Subplot 3: Corriente
+subplot(3, 1, 3);
+plot(t, yout, 'r');
+title('Corriente i(t)');
+xlabel('Tiempo [s]');
+ylabel('Corriente [A]');
+grid on;
 
 %% Item [2]
-T=0.0001; Kmax = 1000; At=T/Kmax ; t = 0:At:T-At;
-%creo el escalon que cambie de signo cada 1ms 
-u=zeros(1,1000);
-signo=true;
-for i=100:1:1000
-    if mod(i,500)==0
-        signo = not(signo);
+% Cargar datos desde Excel
+archivo = 'Curvas_Medidas_RLC_2025.xls';
+datos = xlsread(archivo);
+
+t = datos(:,1);          % Tiempo [s]
+vc = datos(:,3);         % Tensión en el capacitor [V]
+vin = datos(:,4);        % Entrada [V]
+
+% Detectar inicio del escalón
+idx_escalon = find(abs(diff(vin)) > 5, 1);
+t_rel = t(idx_escalon:end) - t(idx_escalon);
+vc_rel = vc(idx_escalon:end);
+
+% Normalizar salida
+vc_final = 12;
+y_norm = vc_rel / vc_final;
+
+%% Buscar 3 puntos válidos para aplicar Chen
+validado = false;
+for i = 5:60
+    for j = i+5:i+15
+        for k = j+5:j+15
+            if k < length(y_norm)
+                y1 = y_norm(i); y2 = y_norm(j); y3 = y_norm(k);
+                k1 = y1 - 1; k2 = y2 - 1; k3 = y3 - 1;
+                be = 4*k1^3*k3 - 3*k1^2*k2^2 - 4*k2^3 + k3^2 + 6*k1*k2*k3;
+                if be > 0
+                    a1 = (k1*k2 + k3 - sqrt(be)) / (2 * (k1^2 + k2));
+                    a2 = (k1*k2 + k3 + sqrt(be)) / (2 * (k1^2 + k2));
+                    if 0 < a1 && a1 < 1 && 0 < a2 && a2 < 1
+                        i1 = i; i2 = j; i3 = k;
+                        validado = true;
+                        break;
+                    end
+                end
+            end
+        end
+        if validado, break; end
     end
-    if signo==1
-        u(1,i)=12;
-    end
-    if signo==0
-        u(1,i)=-12;
-    end
+    if validado, break; end
 end
-plot(t,u);
 
-%Importo los valores de la tabla para graficarlos
-datos=xlsread('Curvas_Medidas_RLC_2025.xls')
-figure
-plot(datos(:,1),datos(:,2));%grafico corriente (1 colum es tiempo y la 2 es corriente)
-figure
-plot(datos(:,1),datos(:,3));%grafico tension(3er columna de la tabla) y tiempo 
-%%
-%Codigo de Chen
-ii=0; % for t_inic=10:15
-ii=ii+1;
+% Aplicar método de Chen
+t1 = t_rel(i1); t2 = t_rel(i2); t3 = t_rel(i3);
+y1 = y_norm(i1); y2 = y_norm(i2); y3 = y_norm(i3);
+k1 = y1 - 1; k2 = y2 - 1; k3 = y3 - 1;
+be = 4*k1^3*k3 - 3*k1^2*k2^2 - 4*k2^3 + k3^2 + 6*k1*k2*k3;
 
-t1=0.0104; %Es el punto 0.012 pero le resto 0.01 que es el tiempo muerto		
-y_t1=6.74485212495084;% valor para el tiempo 0.011
-t2=0.0105; 	
-y_2t2=7.73007776921785;% valor para el tiempo 0.0102
-t3=0.0106; 
-y_3t3=8.53059508686858;% valor para el tiempo 0.0103
+alpha1 = (k1*k2 + k3 - sqrt(be)) / (2 * (k1^2 + k2));
+alpha2 = (k1*k2 + k3 + sqrt(be)) / (2 * (k1^2 + k2));
+beta = (2*k1^3 + 3*k1*k2 + k3 - sqrt(be)) / sqrt(be);
 
-StepAmplitude = 1;
-y_end=12;
-K=y_end/StepAmplitude;  %calculo los coeficientes
-k1=((1/StepAmplitude)*y_t1/K)-1; 
-k2=((1/StepAmplitude)*y_2t2/K)-1;
-k3=((1/StepAmplitude)*y_3t3/K)-1;
-be=4*k1^3*k3-3*k1^2*k2^2-4*k2^3+k3^2+6*k1*k2*k3;
-alfa1=(k1*k2+k3-sqrt(be))/(2*(k1^2+k2));
-alfa2=(k1*k2+k3+sqrt(be))/(2*(k1^2+k2));
-beta=(2*k1^3+3*k1*k2+k3-sqrt(be))/(sqrt(be));
+T1 = -t1 / log(alpha1);
+T2 = -t1 / log(alpha2);
+T3 = beta * (T1 - T2) + T1;
 
-T1_ang=-t1/log(alfa1);
-T2_ang=-t1/log(alfa2);
-T3_ang=beta*(T1_ang-T2_ang)+T1_ang;
-T1(ii)=T1_ang;
-T2(ii)=T2_ang;
-T3(ii)=T3_ang;
-T3_ang=sum(T3/length(T3));
-T2_ang=sum(T2/length(T2));
-T1_ang=sum(T1/length(T1));
+% Coeficientes estimados
+a2 = T1 * T2;
+a1 = T1 + T2;
 
-sys_G_ang=tf(K,conv([T1_ang 1],[T2_ang 1]))
+% Suposición de C
+C = 2.2e-6;
+R = a1 / C;
+L = a2 / C;
 
-figure
-[yaprox,taprox]=lsim(sys_G_ang,u/12,t);
-plot(datos(:,1),datos(:,3),'b');title('Vc');hold on
-plot(0.0101,y_t1,'x')
-hold on
-plot(0.0102,y_2t2,'x')
-plot(0.0103,y_3t3,'x')
-plot(taprox,yaprox);
+fprintf('>> Parámetros estimados:\n');
+fprintf('T1 = %.4e s, T2 = %.4e s\n', T1, T2);
+fprintf('R = %.2f Ohm, L = %.4f H, C = %.1e F\n', R, L, C);
+
+% Función de transferencia estimada
+num = [1];
+den = [L*C R*C 1];
+G = tf(num, den);
+
+% Simulación extendida y comparación (hasta 20 ms)
+%t_sim = t_rel(1:20000);  % Extender simulación a 20 ms
+N = min(20000, length(t_rel));   % asegurarse de no pasarse del largo real
+t_sim = t_rel(1:N);
+u = vin(idx_escalon : idx_escalon + N - 1);
+vc_trunc = vc(idx_escalon : idx_escalon + N - 1);
+
+u = vin(idx_escalon : idx_escalon + length(t_sim) - 1);
+u = u(:); % asegurar vector columna
+[ysim, ~] = lsim(G, u, t_sim);
+
+% Curva medida para comparar
+vc_trunc = vc(idx_escalon : idx_escalon + length(t_sim) - 1);
+
+% Gráfico final
+figure;
+plot(t_sim, vc_trunc, 'b', 'LineWidth', 1.5); hold on;
+plot(t_sim, ysim, 'r--', 'LineWidth', 1.5);
+legend('Medido: v_C(t)', 'Simulado: G(s)', 'Location', 'Southeast');
+title('Comparación extendida: curva medida vs modelo estimado');
+xlabel('Tiempo [s]');
+ylabel('Tensión en el capacitor [V]');
+grid on;
+xlim([0 max(t_sim)]);
 %% Item [3]
-% Parámetros del circuito
-R = 220;           
-L = 0.0851364 ;           
+t = datos(:,1);         % Tiempo [s]
+i_meas = datos(:,2);    % Corriente [A]
+vc = datos(:,3);        % Tensión en el capacitor [V]
+vin = datos(:,4);       % Tensión de entrada [V]
+
+% Parámetros obtenidos con Chen (ítem 2)
+R = 220.31; %para que coincida la grafica aumento levemente la resistencia
+L = 0.0004;
 C = 2.2e-06; 
 
-% Tiempo de simulación
-T = 0.2;             % Tiempo total: 200 ms
-Kmax = 20000;        % Cantidad de muestras
-At = T / Kmax;       % Paso temporal
-t = 0:At:(T-At);     % Vector de tiempo
+% Calcular ganancia real desde la respuesta al escalón
+% Detectar inicio del escalón
+idx_escalon = find(abs(diff(vin)) > 5, 1);
+vc_rel = vc(idx_escalon:end);
 
-% Entrada escalón alternante ±12 V cada 10 ms
-u = zeros(1, Kmax);
-signo = true;
-for i = 1:Kmax
-    if mod(i, 1000) == 1   % Cada 10 ms ? 1000 pasos
-        signo = ~signo;
-    end
-    u(i) = 12 * (2*signo - 1);  % 12 o -12
-end
+K_real = max(vc_rel);  % salida final real del sistema (aprox 12?V)
 
-% Matrices del sistema (modelo en espacio de estados)
-A = [-R/L  -1/L; 1/C   0 ];
+% Función de transferencia con ganancia corregida
+num = [K_real];
+den = [L*C R*C 1];
+G = tf(num, den);
+
+% Modelo en espacio de estados con salida la corriente i(t)
+A = [-R/L -1/L;
+      1/C   0 ];
 B = [1/L; 0];
-C_i = [1 0];       % Observamos la corriente
-C_vc = [0 1];      % Observamos tensión en el capacitor
+C_i = [1 0];   % salida: corriente
 D = 0;
 
-% Sistema para i(t)
 sys_i = ss(A, B, C_i, D);
-i_out = lsim(sys_i, u, t);
 
-% Sistema para v_C(t)
-sys_vc = ss(A, B, C_vc, D);
-v_c_out = lsim(sys_vc, u, t);
+% Simular corriente con entrada real
+t_sim = t;
+u = vin(:);                   
+i_sim = lsim(sys_i, u, t_sim); 
 
-% Graficar resultados
+% Recorte desde t = 0.05 s en adelante
+idx_inicio = find(t >= 0.05, 1);
+t_crop = t(idx_inicio:end);
+i_sim_crop = i_sim(idx_inicio:end);
+i_meas_crop = i_meas(idx_inicio:end);
+
+% Graficar comparación
 figure;
-subplot(3,1,1);
-plot(t, u); title('Entrada: v_e(t)'); ylabel('[V]'); grid on;
-
-subplot(3,1,2);
-plot(t, i_out, 'r'); title('Corriente i(t)'); ylabel('[A]'); grid on;
-
-subplot(3,1,3);
-plot(t, v_c_out, 'b'); title('Tensión en el capacitor v_C(t)'); ylabel('[V]'); xlabel('Tiempo [s]');grid on;
+plot(t_crop, i_meas_crop, 'b', 'LineWidth', 1.4); hold on;
+plot(t_crop, i_sim_crop, 'r--', 'LineWidth', 1.4);
+xlabel('Tiempo [s]');
+ylabel('Corriente i(t) [A]');
+legend('Corriente medida (Excel)', 'Corriente simulada (modelo RLC)');
+title('Comparación: Corriente simulada vs medida desde t = 0.05 s');
+grid on;
