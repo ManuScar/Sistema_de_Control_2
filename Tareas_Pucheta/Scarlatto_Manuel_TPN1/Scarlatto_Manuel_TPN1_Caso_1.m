@@ -5,61 +5,44 @@ R = 220;       % 220 ohm
 L = 500e-3;    % 500 mH
 C = 2.2e-6;    % 2.2 uF
 
-T = 0.01; Kmax = 1000; At = T/Kmax; t = 0:At:(T-At);
-
-% Señal de entrada: escalón que cambia de signo cada 10ms
+T=0.2; Kmax = 20000; At=T/Kmax; t= 0:At:(T-At);
+%hago que el escalon que cambie de signo
 u = zeros(1, Kmax);
 signo = true;
-for i = 100:1:Kmax
-    if mod(i, Kmax/2) == 0
-        signo = not(signo);
+for i = 1:Kmax
+    if mod(i, 1000) == 1   % Cada 10 ms ? 1000 pasos
+        signo = ~signo;
     end
-    if signo
-        u(1, i) = 12;
-    else
-        u(1, i) = -12;
-    end
+    u(i) = 12 * (2*signo - 1);  % 12 o -12
 end
 
-% Matrices para Vc como salida
-A = [-R/L  -1/L; 1/C 0];
-B = [1/L; 0];
-c = [0 1];  % Vc salida
-D = 0;
 
-% Modelo en espacio de estados
-sys1 = ss(A, B, c, D); 
-y = lsim(sys1, u, t);
+% Para ver la tension en el capacitor
+% %Matrices
+A = [-R/L  -1/L ; 1/C 0];
+B =[1/L ; 0];
+c =[0 1];%Vc como salida
+D=0;
 
-sys2 = ss(A, B, c2, D); 
-[yout, ~] = lsim(sys2, u, t);
+sys1=ss(A,B,c,D) %modelo de variables de estado
+figure(1)
+y=lsim(sys1,u,t);
+plot(t,y);title('Vc');grid on;hold on
 
-% Crear una única figura con 3 subgráficas
-figure;
+figure(2)
+plot(t,u);title('Entrada,u');hold on;
 
-% Subplot 1: Vc
-subplot(3, 1, 1);
-plot(t, y, 'b');
-title('Tensión en el capacitor Vc');
-xlabel('Tiempo [s]');
-ylabel('Vc [V]');
-grid on;
+%Para ver la corriente
+%Matrices
+A2 = [-R/L  -1/L ; 1/C 0];
+B2 =[1/L ; 0];
+c2 =[1  0];%corriente como salida
+D2=0;
 
-% Subplot 2: Entrada
-subplot(3, 1, 2);
-plot(t, u, 'k');
-title('Entrada u(t)');
-xlabel('Tiempo [s]');
-ylabel('Voltaje [V]');
-grid on;
-
-% Subplot 3: Corriente
-subplot(3, 1, 3);
-plot(t, yout, 'r');
-title('Corriente i(t)');
-xlabel('Tiempo [s]');
-ylabel('Corriente [A]');
-grid on;
+sys2=ss(A2,B2,c2,D2) %modelo de variables de estado
+figure(3)
+[yout,x]=lsim(sys2,u,t);
+plot(x,yout,'r');title('Corriente');hold on;
 
 %% Item [2]
 % Cargar datos desde Excel
