@@ -41,7 +41,7 @@ $$ c^T = [R \quad 0] \tag{1-4} $$
 Asignar valores a **R = 220 Ω**, **L = 500 mH**, y **C = 2,2 μF**. Obtener simulaciones que permitan estudiar la dinámica del sistema, con una entrada de tensión escalón de **12 V**, que cambia de signo cada **10 ms**.
 
 ### Ítem [2]
-En el archivo **Curvas_Medidas_RLC_2025.xls** (datos en la **hoja 1** y etiquetas en la **hoja 2**) están las series de datos que sirven para deducir los valores de **R**, **L** y **C** del circuito. Emplear el **método de la respuesta al escalón**, tomando como salida la **tensión en el capacitor**.
+En el archivo [**Curvas_Medidas_RLC_2025.xls**](Curvas_Medidas_RLC_2025.xls) (datos en la **hoja 1** y etiquetas en la **hoja 2**) están las series de datos que sirven para deducir los valores de **R**, **L** y **C** del circuito. Emplear el **método de la respuesta al escalón**, tomando como salida la **tensión en el capacitor**.
 
 ### Ítem [3]
 Una vez determinados los parámetros **R**, **L** y **C**, emplear la **serie de corriente desde 0.05 seg en adelante** para validar el resultado **superponiendo las gráficas**.
@@ -114,7 +114,7 @@ plot(x,yout,'r');title('Corriente');hold on;
 
 ### ítem [2]
 
-En este punto, utilizamos el archivo [Curvas_Medidas_Motor_2025_v](Curvas_Medidas_Motor_2025_v.xls), de donde obtendremos las curvas de entradas y salidas de corrintes y tensiones del sistema RLC, y utilizamos los conceptos del articulo [Mathematical and Computer Modelling](<Archivo de Chen.pdf>) para obtener la función de transferencia del sistema.
+En este punto, utilizamos el archivo [Curvas Medidas RLC 2025](Curvas_Medidas_RLC_2025.xls), de donde obtendremos las curvas de entradas y salidas de corrintes y tensiones del sistema RLC, y utilizamos los conceptos del articulo [Mathematical and Computer Modelling](<Archivo de Chen.pdf>) para obtener la función de transferencia del sistema.
 
 Entonces, la curva del capacitor es la siguiente:
 
@@ -316,6 +316,33 @@ A continuación se deja el link donde podran encontrar el código Matlab complet
 ---
 ## Caso de estudio 2. Sistema de tres variables de estado
 
+Dadas las ecuaciones del motor de corriente continua con torque de carga $T_L$ no nulo, con los parámetros  
+$L_{AA} = 366 \cdot 10^{-6} ,  J = 5 \cdot 10^{-9} ,  R_A = 55.6 ,  B = 0 ,  K_i = 6.49 \cdot 10^{-3} ,  K_m = 6.53 \cdot 10^{-3} $:
+
+$$ \frac{d i_a}{dt} = -\frac{R_A}{L_{AA}} i_a - \frac{K_m}{L_{AA}} \omega_r + \frac{1}{L_{AA}} v_a \tag{1-5} $$
+
+$$ \frac{d \omega_r}{dt} = \frac{K_i}{J} i_a - \frac{B_m}{J} \omega_r - \frac{1}{J} T_L \tag{1-6} $$
+
+$$ \frac{d \theta}{dt} = \omega_r \tag{1-7} $$
+
+### Ítem [4]  
+Obtener el torque máximo que puede soportar el motor modelado mediante las ecuaciones (1-5), (1-6) y (1-7) cuando se lo alimenta con **12 V**, graficando por **5 segundos** de tiempo la **velocidad angular** y **corriente $i_a$** para establecer su valor máximo, como para dimensionar dispositivos electrónicos.
+
+### Ítem [5]  
+A partir de las curvas de mediciones de las variables graficadas en la **Fig. 1-3**, se requiere obtener el modelo del sistema considerando como entrada un escalón de **12 V**, como salida a la **velocidad angular**, y al **torque de carga $T_L$** aplicado una perturbación. En el archivo [**Curvas_Medidas_Motor_2025.xls**](Curvas_Medidas_Motor_2025_v.xls) están las mediciones, en la **primer hoja los valores** y en la **segunda los nombres**. Se requiere obtener el **modelo dinámico**, para establecer las constantes del modelo (1-5), (1-6).
+
+### Ítem [6]  
+Implementar un **PID en tiempo discreto** para que el **ángulo del motor** permanezca en una referencia de **1 radian**, sometido al **torque descripto en la Fig. 1-3**.  
+**Tip**: partir de $K_P = 0.1$, $K_I = 0.01$, $K_D = 5$.
+
+<figure>
+  <img src="Imagenes/Curvas_Motor.png" alt="Curvas del circuito RLC para una entrada de 12V." width="600"/>
+  <figcaption><em>Figura 1-3. Curvas de un motor CC para una entrada de 2V.</em></figcaption>
+</figure>
+
+## Desarrollo
+
+### Ítem [4]
 
 
 ---
