@@ -247,8 +247,74 @@ xlim([0 max(t_sim)]);
 
 ### Ítem [3]
 
+Una vez obtenidos los valores del circuito, procedemos a simular y comparar las curvas de las corrientes. 
+
+![alt text](Imagenes/Curvas_Corrientes.png)
+
+Donde vemos que nuevamente la aproximación del sistema a traves del método de Chen es correcto.
+
+### Código Matlab Ítem [3]
+
+```
+%% Item [3]
+t = datos(:,1);         % Tiempo [s]
+i_meas = datos(:,2);    % Corriente [A]
+vc = datos(:,3);        % Tensión en el capacitor [V]
+vin = datos(:,4);       % Tensión de entrada [V]
+
+% Parámetros obtenidos con Chen (ítem 2)
+R = 220.31; %para que coincida la grafica aumento levemente la resistencia
+L = 0.0004;
+C = 2.2e-06; 
+
+% Calcular ganancia real desde la respuesta al escalón
+% Detectar inicio del escalón
+idx_escalon = find(abs(diff(vin)) > 5, 1);
+vc_rel = vc(idx_escalon:end);
+
+K_real = max(vc_rel);  % salida final real del sistema (aprox 12?V)
+
+% Función de transferencia con ganancia corregida
+num = [K_real];
+den = [L*C R*C 1];
+G = tf(num, den);
+
+% Modelo en espacio de estados con salida la corriente i(t)
+A = [-R/L -1/L;
+      1/C   0 ];
+B = [1/L; 0];
+C_i = [1 0];   % salida: corriente
+D = 0;
+
+sys_i = ss(A, B, C_i, D);
+
+% Simular corriente con entrada real
+t_sim = t;
+u = vin(:);                   
+i_sim = lsim(sys_i, u, t_sim); 
+
+% Recorte desde t = 0.05 s en adelante
+idx_inicio = find(t >= 0.05, 1);
+t_crop = t(idx_inicio:end);
+i_sim_crop = i_sim(idx_inicio:end);
+i_meas_crop = i_meas(idx_inicio:end);
+
+% Graficar comparación
+figure;
+plot(t_crop, i_meas_crop, 'b', 'LineWidth', 1.4); hold on;
+plot(t_crop, i_sim_crop, 'r--', 'LineWidth', 1.4);
+xlabel('Tiempo [s]');
+ylabel('Corriente i(t) [A]');
+legend('Corriente medida (Excel)', 'Corriente simulada (modelo RLC)');
+title('Comparación: Corriente simulada vs medida desde t = 0.05 s');
+grid on;
+```
+
+A continuación se deja el link donde podran encontrar el código Matlab completo del caso de estudio N°1.
+### [Código Matlab del Caso de estudio 1](Scarlatto_Manuel_TPN1_Caso_1.m)
+
 ---
-## Caso de estudio 2. Sistema de tres variable de estado
+## Caso de estudio 2. Sistema de tres variables de estado
 
 
 
