@@ -354,6 +354,80 @@ Realizando iteraciones, se llego al valor de $T_Lmáx = 1.4007e-3 [N*m]$; donde 
 
 ![alt text](Imagenes/Curvas_TL_max.png)
 
+### Código Matlab Ítem [4]
+
+```
+%% Item [4]
+L_AA = 366e-6;      % Inductancia de armadura (H)
+R_A = 55.6;         % Resistencia de armadura (Ohm)
+J = 5e-9;           % Momento de inercia (kg·m^2)
+B = 0;              % Coeficiente de fricción (despreciable)
+K_i = 6.49e-3;      % Constante de torque (N·m/A)
+K_m = 6.53e-3;      % Constante de fuerza contraelectromotriz (V·s/rad)
+%T_L = 0;
+T_L = 1.4007e-3;    % Torque de carga (N·m)
+v_a = 12;           % Voltaje de entrada (V)
+
+% Condiciones iniciales
+i_a = 0;            % Corriente de armadura inicial (A)
+omega = 0;          % Velocidad angular inicial (rad/s)
+theta = 0;          % Posición angular inicial (rad)
+
+% Tiempo de simulación
+T_total = 5;        % Tiempo total de simulación (s)
+dt = 1e-7;          % Paso de tiempo (s)
+N = T_total / dt;   % Número de pasos de simulación
+
+% Prealocación de vectores para almacenar resultados
+t = zeros(1, N);
+i_a_vec = zeros(1, N);
+omega_vec = zeros(1, N);
+theta_vec = zeros(1, N);
+
+% Simulación utilizando el método de Euler
+for k = 1:N
+    % Almacenar resultados actuales
+    t(k) = (k-1) * dt;
+    i_a_vec(k) = i_a;
+    omega_vec(k) = omega;
+    theta_vec(k) = theta;
+    
+    % Cálculo de derivadas
+    di_a = (-R_A * i_a - K_m * omega + v_a) / L_AA;
+    domega = (K_i * i_a - B * omega - T_L) / J;
+    dtheta = omega;
+    
+    % Actualización de variables utilizando el método de Euler
+    i_a = i_a + dt * di_a;
+    omega = omega + dt * domega;
+    theta = theta + dt * dtheta;
+end
+
+% Gráficas de resultados
+figure;
+subplot(3,1,1);
+plot(t, theta_vec, 'g');
+title('Posición angular \theta(t)');
+grid on;
+
+
+subplot(3,1,2);
+plot(t, omega_vec, 'b');
+title('Velocidad angular w(t)');
+grid on;
+
+subplot(3,1,3);
+plot(t, i_a_vec, 'r');
+title('i_a(t)');
+xlabel('Tiempo [s]');
+grid on;
+
+% Mostrar valores máximos
+fprintf('Valor máximo de i_a(t): %.4f A\n', max(i_a_vec));
+fprintf('Valor máximo de w(t): %.4f rad/s\n', max(omega_vec));
+fprintf('Valor máximo de theta(t): %.4f rad\n', max(theta_vec));
+```
+
 ### Ítem [5]
 
 
