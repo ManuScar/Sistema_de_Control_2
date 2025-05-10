@@ -344,5 +344,18 @@ Implementar un **PID en tiempo discreto** para que el **ángulo del motor** perm
 
 ### Ítem [4]
 
+A traves de la integración de Euler podemos observar el comportamiento de las variables, en primera instancia veremos como se comporte sin aplicar el torque de carga:
+
+![alt text](Imagenes/Item_4.png)
+
+Se observa como la posición de $\theta(t)$ crece a medida que gira el motor, mientras que la velocidad angular ($\omega(t)$) se mantiene constante y la corriente $i_a(t)$ presenta un pico de corriente y luego disminuye mucho su valor dado que no hay carga.
+
+Realizando iteraciones, se llego al valor de $T_Lmáx = 1.4007e-3 [N*m]$; donde podemos observar que la velocidad del motor es practicamente nula ($\omega(t)=0.0255 [rad/s]$) y la corriente toma un valor de $i_a(t) = 216 [mA]$.
+
+![alt text](Imagenes/Curvas_TL_max.png)
+
+### Ítem [5]
+
+
 
 ---

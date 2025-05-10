@@ -7,7 +7,7 @@ B = 0;              % Coeficiente de fricción (despreciable)
 K_i = 6.49e-3;      % Constante de torque (N·m/A)
 K_m = 6.53e-3;      % Constante de fuerza contraelectromotriz (V·s/rad)
 %T_L = 0;
-T_L = 1.4007e-3;    % Torque de carga (N·m)
+T_L = 1.4003e-3;            % Torque de carga (N·m)
 v_a = 12;           % Voltaje de entrada (V)
 
 % Condiciones iniciales
@@ -67,7 +67,7 @@ grid on;
 % Mostrar valores máximos
 fprintf('Valor máximo de i_a(t): %.4f A\n', max(i_a_vec));
 fprintf('Valor máximo de w(t): %.4f rad/s\n', max(omega_vec));
-fprintf('Valor máximo de theta(t): %.4f rad\n', max(theta_vec));
+fprintf('Valor máximo de \theta(t): %.4f rad\n', max(theta_vec));
 
 %% Item [5]
 % clc;clear all;close all;
