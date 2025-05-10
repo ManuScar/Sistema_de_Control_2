@@ -138,7 +138,7 @@ figure;
 plot(t_sim, vc_trunc, 'b', 'LineWidth', 1.5); hold on;
 plot(t_sim, ysim, 'r--', 'LineWidth', 1.5);
 legend('Medido: v_C(t)', 'Simulado: G(s)', 'Location', 'Southeast');
-title('Comparación extendida: curva medida vs modelo estimado');
+%title('Comparación extendida: curva medida vs modelo estimado');
 xlabel('Tiempo [s]');
 ylabel('Tensión en el capacitor [V]');
 grid on;
