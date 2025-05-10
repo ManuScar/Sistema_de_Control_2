@@ -22,32 +22,15 @@
 
 Sea el sistema eléctrico de la figura 1-1, con las representaciones en variables de estado
 
-$$
-\dot{x}(t) = A x(t) + b u(t) \tag{1-1}
-$$
+$$ \dot{x}(t) = A x(t) + b u(t) \tag{1-1} $$
 
-$$
-y = c^T x(t) \tag{1-2}
-$$
+$$ y = c^T x(t) \tag{1-2} $$
 
 donde las matrices contienen a los coeficientes del circuito:
 
-$$
-A = 
-\begin{bmatrix}
--\frac{R}{L} & -\frac{1}{L} \\
-\frac{1}{C} & 0
-\end{bmatrix}, \quad
-b = 
-\begin{bmatrix}
-\frac{1}{L} \\
-0
-\end{bmatrix} \tag{1-3}
-$$
+$$ A = \begin{bmatrix} -\frac{R}{L} & -\frac{1}{L} \\ \frac{1}{C} & 0 \end{bmatrix}, \quad b = \begin{bmatrix} \frac{1}{L} \\ 0 \end{bmatrix} \tag{1-3} $$
 
-$$
-c^T = [R \quad 0] \tag{1-4}
-$$
+$$ c^T = [R \quad 0] \tag{1-4} $$
 
 <figure>
   <img src="Imagenes/Curvas.png" alt="Curvas del circuito RLC para una entrada de 12V." width="600"/>
