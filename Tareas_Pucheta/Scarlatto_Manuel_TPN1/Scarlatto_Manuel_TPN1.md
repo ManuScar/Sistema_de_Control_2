@@ -427,6 +427,7 @@ fprintf('Valor máximo de i_a(t): %.4f A\n', max(i_a_vec));
 fprintf('Valor máximo de w(t): %.4f rad/s\n', max(omega_vec));
 fprintf('Valor máximo de theta(t): %.4f rad\n', max(theta_vec));
 ```
+--- 
 
 ### Ítem [5]
 
@@ -547,6 +548,91 @@ plot(t_t1, y_t1, 'xb');
 plot(t_2t1, y_2t1, 'xb');
 plot(t_3t1, y_3t1, 'xb');
 legend('Velocidad angular original', 'Velocidad angular identificada', 'Puntos de muestreo');
+```
+
+### Ítem [6]
+
+En este ítem se nos pide realizar un controlador, para lo cual nos dan los siguientes valores:
+
+```
+Kp = 0.1;
+Ki = 0.01; 
+Kd = 5;
+```
+Quedandonos el controlador de la forma siguiente:
+
+```
+C =
+ 
+             1     Ts*(z+1)                1        
+  Kp * (1 + ---- * -------- + Td * -----------------)
+             Ti    2*(z-1)         (Td/N)+Ts*z/(z-1)
+
+  with Kp = 0.1, Ti = 0.01, Td = 5, N = 10, Ts = 0.01
+```
+
+Discretizamos 'G':
+
+```
+Gd =
+ 
+  0.008926 z^2 + 0.01785 z + 0.008926
+  -----------------------------------
+        z^2 - 1.759 z + 0.7688
+```
+
+Para obtener la FT del sistema a LC utilizamos la función 'feedback()', entonces:
+
+```
+T =
+ 
+  0.01009 z^4 + 0.0009188 z^3 - 0.01924 z^2 - 0.0008838 z + 0.009188
+  ------------------------------------------------------------------
+         1.01 z^4 - 3.739 z^3 + 5.214 z^2 - 3.248 z + 0.7629
+```
+Siendo la respuesta del sistema el siguiente:
+
+![alt text](Imagenes/PID.png)
+
+### Código Matlab
+
+```
+%% Ítem [6] - Control PID 
+% Parámetros de la función de transferencia identificada
+num_calc = 0.2656;
+den_calc = [6.5615e-4, 17.1985e-3, 0.0705];
+G = tf(num_calc, den_calc);
+
+% Tiempo de muestreo
+Ts = 0.01; % segundos
+
+% Discretización de la planta
+Gd = c2d(G, Ts, 'tustin');
+
+% Parámetros del controlador PID
+Kp = 0.1;
+Ki = 0.01; % Tiempo integral en segundos
+Kd = 5; % Tiempo derivativo en segundos
+N = 10;   % Divisor del filtro derivativo
+
+% Creación del controlador PID en forma estándar y tiempo discreto
+C = pidstd(Kp, Ki, Kd, N, Ts, 'IFormula', 'Trapezoidal', 'DFormula', 'BackwardEuler');
+
+% Sistema en lazo cerrado
+T = feedback(C * Gd, 1);
+
+% Simulación de la respuesta al escalón
+t = 0:Ts:5; % Tiempo de simulación de 5 segundos
+[y, t_out] = step(T, t);
+
+% Gráfica de la respuesta
+figure;
+plot(t_out, y, 'b', 'LineWidth', 1.5);
+grid on;
+xlabel('Tiempo (s)');
+ylabel('Ángulo (rad)');
+title('Respuesta al escalón del sistema en lazo cerrado');
+legend('Salida del sistema');
 ```
 
 ---
