@@ -7,7 +7,7 @@ B = 0;              % Coeficiente de fricción (despreciable)
 K_i = 6.49e-3;      % Constante de torque (N·m/A)
 K_m = 6.53e-3;      % Constante de fuerza contraelectromotriz (V·s/rad)
 %T_L = 0;
-T_L = 1.4003e-3;            % Torque de carga (N·m)
+T_L = 1.4007e-3;    % Torque de carga (N·m)
 v_a = 12;           % Voltaje de entrada (V)
 
 % Condiciones iniciales
@@ -67,10 +67,9 @@ grid on;
 % Mostrar valores máximos
 fprintf('Valor máximo de i_a(t): %.4f A\n', max(i_a_vec));
 fprintf('Valor máximo de w(t): %.4f rad/s\n', max(omega_vec));
-fprintf('Valor máximo de \theta(t): %.4f rad\n', max(theta_vec));
+fprintf('Valor máximo de theta(t): %.4f rad\n', max(theta_vec));
 
 %% Item [5]
-% clc;clear all;close all;
 % Lectura de los datos
 archivo = 'Curvas_Medidas_Motor_2025_v.xls';
 hoja = 'Hoja1';
@@ -88,67 +87,55 @@ rango_tot3='C1:C1500';
 t_tot=xlsread(archivo,hoja,rango_tot1); 
 w_tot=xlsread(archivo,hoja,rango_tot2);
 i_tot=xlsread(archivo,hoja,rango_tot3);
+
 %Escalón de amplitud 2V
 opt = stepDataOptions;
 opt.StepAmplitude = 2;
 K=w_parcial(end)/opt.StepAmplitude;
+
 %Tiempos auxiliares
-t_sim=xlsread(archivo,hoja,'A700')-xlsread(archivo,hoja,'A102'); %Tiempo de simulación con el motor alimentado sin torque de carga
-t_ret=0.102; %Tiempo de retardo hasta que se alimenta el motor
-t_inic=0.04; %Tiempo de la primer muestra, influye directamente sobre el error entre la curva identificada y la original
-%Obtención de los datos correspondientes a los 3 puntos
-[val,lugar] =min(abs(t_inic-t_parcial+t_ret)); %Con retardo de datos
-t_t1=t_parcial(lugar);
-y_t1=w_parcial(lugar);
-[val,lugar] =min(abs(2*t_inic-t_parcial+t_ret)); %Con retardo de datos
-t_2t1=t_parcial(lugar);
-y_2t1=w_parcial(lugar);
-[val,lugar] =min(abs(3*t_inic-t_parcial+t_ret)); %Con retardo de datos
-t_3t1=t_parcial(lugar);
-y_3t1=w_parcial(lugar);
+t_sim=xlsread(archivo,hoja,'A700')-xlsread(archivo,hoja,'A102'); 
+t_ret=0.102;
+t_inic=0.04;
 
-ii=0; 
-ii=ii+1;
+% Puntos de muestreo para identificación
+[val,lugar] =min(abs(t_inic-t_parcial+t_ret));
+t_t1=t_parcial(lugar); y_t1=w_parcial(lugar);
+[val,lugar] =min(abs(2*t_inic-t_parcial+t_ret));
+t_2t1=t_parcial(lugar); y_2t1=w_parcial(lugar);
+[val,lugar] =min(abs(3*t_inic-t_parcial+t_ret));
+t_3t1=t_parcial(lugar); y_3t1=w_parcial(lugar);
 
-%Cálculo de los parámetros necesarios para el método
+ii=0; ii=ii+1;
+
+% Identificación (método de Chen)
 k1=(1/opt.StepAmplitude)*y_t1/K-1; 
 k2=(1/opt.StepAmplitude)*y_2t1/K-1;
 k3=(1/opt.StepAmplitude)*y_3t1/K-1;
-be=4*k1^3*k3-3*k1^2*k2^2-4*k2^3+k3^2+6*k1*k2*k3; %Chen (23)
-alfa1=(k1*k2+k3-sqrt(be))/(2*(k1^2+k2)); %Chen (21)
-alfa2=(k1*k2+k3+sqrt(be))/(2*(k1^2+k2)); %Chen (22)
-% beta=(2*k1^3+3*k1*k2+k3-sqrt(be))/(sqrt(be));
+be=4*k1^3*k3 - 3*k1^2*k2^2 - 4*k2^3 + k3^2 + 6*k1*k2*k3;
+alfa1=(k1*k2+k3-sqrt(be))/(2*(k1^2+k2)); 
+alfa2=(k1*k2+k3+sqrt(be))/(2*(k1^2+k2)); 
 beta=(k1+alfa2)/(alfa1-alfa2);
-T1_ang=-(t_t1-t_ret)/log(alfa1); %Con retardo de datos
-T2_ang=-(t_t1-t_ret)/log(alfa2); %Con retardo de datos
+T1_ang=-(t_t1-t_ret)/log(alfa1);
+T2_ang=-(t_t1-t_ret)/log(alfa2);
 T3_ang=beta*(T1_ang-T2_ang)+T1_ang;
-T1(ii)=T1_ang;
-T2(ii)=T2_ang;
-T3(ii)=T3_ang;
-T3_ang=sum(T3/length(T3));
-T2_ang=sum(T2/length(T2));
-T1_ang=sum(T1/length(T1));
-%Función de transferencia identificada
+T1(ii)=T1_ang; T2(ii)=T2_ang; T3(ii)=T3_ang;
+T1_ang=mean(T1); T2_ang=mean(T2); T3_ang=mean(T3);
+
+% Función de transferencia identificada
 num=[T3_ang 1];
 den=conv([T1_ang 1],[T2_ang 1]);
 disp('Funcion de transferencia identificada')
-sys_G_ang=tf(K*num, den)
-[y_ang,t_ang]=step(sys_G_ang,opt,t_sim); %Respuesta al escalon
-%Gráfica de ia para obtener visualmente su valor máximo
-figure(1);
-hold on;plot(t_tot,i_tot,'b');grid on;title('Corriente de armadura');
-%Función de transferencia calculada
-disp('Funcion de transferencia calculada')
-num_calc = 0.2656; 
-den_calc = [6.5615e-4 17.1985e-3 0.0705];
-Gcalc = tf(num_calc, den_calc)
-[y_calc,t_calc]=step(Gcalc,opt,t_sim); %Respuesta al escalon
+sys_G_ang=tf(K*num, den);
+[y_ang,t_ang]=step(sys_G_ang,opt,t_sim);
+
+% Gráfica de resultados
 figure(2);
-plot(t_parcial,w_parcial,'b');grid on;hold on;
-plot(t_ang+t_ret,y_ang,'g');grid on;hold on; %Con retardo de datos
-plot(t_calc+t_ret,y_calc,'r');grid on;       %Con retardo de datos
+plot(t_parcial,w_parcial,'b'); hold on; grid on;
+%plot(t_ang+t_ret,y_ang,'g'); hold on;
+plot(t_t1, y_t1,'xk'); plot(t_2t1, y_2t1,'xk'); plot(t_3t1, y_3t1,'xk');
 title('Velocidad angular, w[rad/s]');
-plot(t_t1, y_t1,'xb');
-plot(t_2t1, y_2t1,'xb');
-plot(t_3t1, y_3t1,'xb');
-legend('Velocidad angular original','Velocidad angular identificada','Velocidad angular calculada');
+xlabel('Tiempo [s]');
+ylabel('Velocidad angular [rad/s]');
+%legend('Velocidad angular original','Velocidad angular identificada','Puntos de muestreo');
+legend('Velocidad angular original',,'Puntos de muestreo');

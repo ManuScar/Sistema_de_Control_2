@@ -430,6 +430,24 @@ fprintf('Valor máximo de theta(t): %.4f rad\n', max(theta_vec));
 
 ### Ítem [5]
 
+Ahora realizaremos una aproximación a la curva tal cual como lo hicimos en el Item [2] a partir del articulo de [Chen](<Archivo de Chen.pdf>); entonces, tomamos 3 puntos de la curva y obtenemos: 
 
+![alt text](Imagenes/Item_5_Chen.png)
+
+La función de transferencia del sistema es la siguiente:
+
+```
+                0.2656
+FT = ---------------------------------
+     0.0006561 s^2 + 0.0172 s + 0.0705
+```
+
+Ahora, graficamos la aproximación y podemos observar como esta se asemeja a la real.
+
+![alt text](Imagenes/Item_5_Curva_Aprox.png)
+
+Siendo la corriente de armadura la siguiente:
+
+![alt text](Imagenes/Item_5_corriente.png)
 
 ---
