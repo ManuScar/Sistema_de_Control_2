@@ -2,31 +2,31 @@ close all, clear all, clc
 %% Item [4]
 L_AA = 366e-6;      % Inductancia de armadura (H)
 R_A = 55.6;         % Resistencia de armadura (Ohm)
-J = 5e-9;           % Momento de inercia (kg·m^2)
-B = 0;              % Coeficiente de fricción (despreciable)
-K_i = 6.49e-3;      % Constante de torque (N·m/A)
-K_m = 6.53e-3;      % Constante de fuerza contraelectromotriz (V·s/rad)
+J = 5e-9;           % Momento de inercia (kgï¿½m^2)
+B = 0;              % Coeficiente de fricciï¿½n (despreciable)
+K_i = 6.49e-3;      % Constante de torque (Nï¿½m/A)
+K_m = 6.53e-3;      % Constante de fuerza contraelectromotriz (Vï¿½s/rad)
 %T_L = 0;
-T_L = 1.4007e-3;    % Torque de carga (N·m)
+T_L = 1.4007e-3;    % Torque de carga (Nï¿½m)
 v_a = 12;           % Voltaje de entrada (V)
 
 % Condiciones iniciales
 i_a = 0;            % Corriente de armadura inicial (A)
 omega = 0;          % Velocidad angular inicial (rad/s)
-theta = 0;          % Posición angular inicial (rad)
+theta = 0;          % Posiciï¿½n angular inicial (rad)
 
-% Tiempo de simulación
-T_total = 5;        % Tiempo total de simulación (s)
+% Tiempo de simulaciï¿½n
+T_total = 5;        % Tiempo total de simulaciï¿½n (s)
 dt = 1e-7;          % Paso de tiempo (s)
-N = T_total / dt;   % Número de pasos de simulación
+N = T_total / dt;   % Nï¿½mero de pasos de simulaciï¿½n
 
-% Prealocación de vectores para almacenar resultados
+% Prealocaciï¿½n de vectores para almacenar resultados
 t = zeros(1, N);
 i_a_vec = zeros(1, N);
 omega_vec = zeros(1, N);
 theta_vec = zeros(1, N);
 
-% Simulación utilizando el método de Euler
+% Simulaciï¿½n utilizando el mï¿½todo de Euler
 for k = 1:N
     % Almacenar resultados actuales
     t(k) = (k-1) * dt;
@@ -34,22 +34,22 @@ for k = 1:N
     omega_vec(k) = omega;
     theta_vec(k) = theta;
     
-    % Cálculo de derivadas
+    % Cï¿½lculo de derivadas
     di_a = (-R_A * i_a - K_m * omega + v_a) / L_AA;
     domega = (K_i * i_a - B * omega - T_L) / J;
     dtheta = omega;
     
-    % Actualización de variables utilizando el método de Euler
+    % Actualizaciï¿½n de variables utilizando el mï¿½todo de Euler
     i_a = i_a + dt * di_a;
     omega = omega + dt * domega;
     theta = theta + dt * dtheta;
 end
 
-% Gráficas de resultados
+% Grï¿½ficas de resultados
 figure;
 subplot(3,1,1);
 plot(t, theta_vec, 'g');
-title('Posición angular \theta(t)');
+title('Posiciï¿½n angular \theta(t)');
 grid on;
 
 
@@ -64,10 +64,10 @@ title('i_a(t)');
 xlabel('Tiempo [s]');
 grid on;
 
-% Mostrar valores máximos
-fprintf('Valor máximo de i_a(t): %.4f A\n', max(i_a_vec));
-fprintf('Valor máximo de w(t): %.4f rad/s\n', max(omega_vec));
-fprintf('Valor máximo de theta(t): %.4f rad\n', max(theta_vec));
+% Mostrar valores mï¿½ximos
+fprintf('Valor mï¿½ximo de i_a(t): %.4f A\n', max(i_a_vec));
+fprintf('Valor mï¿½ximo de w(t): %.4f rad/s\n', max(omega_vec));
+fprintf('Valor mï¿½ximo de theta(t): %.4f rad\n', max(theta_vec));
 
 %% Item [5]
 % Lectura de los datos
@@ -89,17 +89,17 @@ t_tot = xlsread(archivo, hoja, rango_tot1);
 w_tot = xlsread(archivo, hoja, rango_tot2);
 i_tot = xlsread(archivo, hoja, rango_tot3);
 
-% Escalón de amplitud 2V
+% Escalï¿½n de amplitud 2V
 opt = stepDataOptions;
 opt.StepAmplitude = 2;
 K = w_parcial(end) / opt.StepAmplitude;
 
 % Tiempos auxiliares
-t_sim = xlsread(archivo, hoja, 'A700') - xlsread(archivo, hoja, 'A102'); % Tiempo de simulación
+t_sim = xlsread(archivo, hoja, 'A700') - xlsread(archivo, hoja, 'A102'); % Tiempo de simulaciï¿½n
 t_ret = 0.102; % Retardo
 t_inic = 0.04; % Primera muestra
 
-% Obtención de 3 puntos
+% Obtenciï¿½n de 3 puntos
 [val, lugar] = min(abs(t_inic - t_parcial + t_ret));
 t_t1 = t_parcial(lugar);
 y_t1 = w_parcial(lugar);
@@ -115,7 +115,7 @@ y_3t1 = w_parcial(lugar);
 ii = 0; 
 ii = ii + 1;
 
-% Cálculo de parámetros (Chen)
+% Cï¿½lculo de parï¿½metros (Chen)
 k1 = (1 / opt.StepAmplitude) * y_t1 / K - 1; 
 k2 = (1 / opt.StepAmplitude) * y_2t1 / K - 1;
 k3 = (1 / opt.StepAmplitude) * y_3t1 / K - 1;
@@ -134,14 +134,14 @@ T3_ang = sum(T3 / length(T3));
 T2_ang = sum(T2 / length(T2));
 T1_ang = sum(T1 / length(T1));
 
-% Función de transferencia identificada
+% Funciï¿½n de transferencia identificada
 num = [T3_ang 1];
 den = conv([T1_ang 1], [T2_ang 1]);
 disp('Funcion de transferencia identificada')
 sys_G_ang = tf(K * num, den);
 [y_ang, t_ang] = step(sys_G_ang, opt, t_sim);
 
-% Gráfica de ia
+% Grï¿½fica de ia
 figure(1);
 hold on;
 plot(t_tot, i_tot, 'b'); grid on;
@@ -154,7 +154,7 @@ den_calc = [6.5615e-4 17.1985e-3 0.0705];
 Gcalc = tf(num_calc, den_calc);
 [y_calc, t_calc] = step(Gcalc, opt, t_sim);
 
-% Gráfica de velocidad angular (sin la curva calculada)
+% Grï¿½fica de velocidad angular (sin la curva calculada)
 figure(2);
 plot(t_parcial, w_parcial, 'b'); grid on; hold on;
 plot(t_ang + t_ret, y_ang, 'g'); hold on;
@@ -163,8 +163,8 @@ plot(t_t1, y_t1, 'xb');
 plot(t_2t1, y_2t1, 'xb');
 plot(t_3t1, y_3t1, 'xb');
 legend('Velocidad angular original', 'Velocidad angular identificada', 'Puntos de muestreo');
-%% Ítem [6] - Control PID
-% Parámetros de la función de transferencia identificada
+%% ï¿½tem [6] - Control PID
+% Parï¿½metros de la funciï¿½n de transferencia identificada
 num_calc = 0.2656;
 den_calc = [6.5615e-4, 17.1985e-3, 0.0705];
 G = tf(num_calc, den_calc);
@@ -172,31 +172,31 @@ G = tf(num_calc, den_calc);
 % Tiempo de muestreo
 Ts = 0.01; % segundos
 
-% Discretización de la planta
+% Discretizaciï¿½n de la planta
 Gd = c2d(G, Ts, 'tustin');
 
-% Parámetros del controlador PID
+% Parï¿½metros del controlador PID
 Kp = 0.1;
 Ki = 0.01; % Tiempo integral en segundos
 Kd = 5; % Tiempo derivativo en segundos
 N = 10;   % Divisor del filtro derivativo
 
-% Creación del controlador PID en forma estándar y tiempo discreto
+% Creaciï¿½n del controlador PID en forma estï¿½ndar y tiempo discreto
 C = pidstd(Kp, Ki, Kd, N, Ts, 'IFormula', 'Trapezoidal', 'DFormula', 'BackwardEuler');
 
 % Sistema en lazo cerrado
 T = feedback(C * Gd, 1);
 
-% Simulación de la respuesta al escalón
-t = 0:Ts:5; % Tiempo de simulación de 5 segundos
+% Simulaciï¿½n de la respuesta al escalï¿½n
+t = 0:Ts:5; % Tiempo de simulaciï¿½n de 5 segundos
 [y, t_out] = step(T, t);
 
-% Gráfica de la respuesta
+% Grï¿½fica de la respuesta
 figure;
 plot(t_out, y, 'b', 'LineWidth', 1.5);
 grid on;
 xlabel('Tiempo (s)');
-ylabel('Ángulo (rad)');
-title('Respuesta al escalón del sistema en lazo cerrado');
+ylabel('ï¿½ngulo (rad)');
+title('Respuesta al escalï¿½n del sistema en lazo cerrado');
 legend('Salida del sistema');
 

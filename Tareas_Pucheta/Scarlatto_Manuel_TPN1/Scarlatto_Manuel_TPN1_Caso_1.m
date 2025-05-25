@@ -50,10 +50,10 @@ archivo = 'Curvas_Medidas_RLC_2025.xls';
 datos = xlsread(archivo);
 
 t = datos(:,1);          % Tiempo [s]
-vc = datos(:,3);         % Tensión en el capacitor [V]
+vc = datos(:,3);         % Tensiï¿½n en el capacitor [V]
 vin = datos(:,4);        % Entrada [V]
 
-% Detectar inicio del escalón
+% Detectar inicio del escalï¿½n
 idx_escalon = find(abs(diff(vin)) > 5, 1);
 t_rel = t(idx_escalon:end) - t(idx_escalon);
 vc_rel = vc(idx_escalon:end);
@@ -62,7 +62,7 @@ vc_rel = vc(idx_escalon:end);
 vc_final = 12;
 y_norm = vc_rel / vc_final;
 
-%% Buscar 3 puntos válidos para aplicar Chen
+%% Buscar 3 puntos vï¿½lidos para aplicar Chen
 validado = false;
 for i = 5:60
     for j = i+5:i+15
@@ -87,7 +87,7 @@ for i = 5:60
     if validado, break; end
 end
 
-% Aplicar método de Chen
+% Aplicar mï¿½todo de Chen
 t1 = t_rel(i1); t2 = t_rel(i2); t3 = t_rel(i3);
 y1 = y_norm(i1); y2 = y_norm(i2); y3 = y_norm(i3);
 k1 = y1 - 1; k2 = y2 - 1; k3 = y3 - 1;
@@ -105,22 +105,22 @@ T3 = beta * (T1 - T2) + T1;
 a2 = T1 * T2;
 a1 = T1 + T2;
 
-% Suposición de C
+% Suposiciï¿½n de C
 C = 2.2e-6;
 R = a1 / C;
 L = a2 / C;
 
-fprintf('>> Parámetros estimados:\n');
+fprintf('>> Parï¿½metros estimados:\n');
 fprintf('T1 = %.4e s, T2 = %.4e s\n', T1, T2);
 fprintf('R = %.2f Ohm, L = %.4f H, C = %.1e F\n', R, L, C);
 
-% Función de transferencia estimada
+% Funciï¿½n de transferencia estimada
 num = [1];
 den = [L*C R*C 1];
 G = tf(num, den);
 
-% Simulación extendida y comparación (hasta 20 ms)
-%t_sim = t_rel(1:20000);  % Extender simulación a 20 ms
+% Simulaciï¿½n extendida y comparaciï¿½n (hasta 20 ms)
+%t_sim = t_rel(1:20000);  % Extender simulaciï¿½n a 20 ms
 N = min(20000, length(t_rel));   % asegurarse de no pasarse del largo real
 t_sim = t_rel(1:N);
 u = vin(idx_escalon : idx_escalon + N - 1);
@@ -133,35 +133,35 @@ u = u(:); % asegurar vector columna
 % Curva medida para comparar
 vc_trunc = vc(idx_escalon : idx_escalon + length(t_sim) - 1);
 
-% Gráfico final
+% Grï¿½fico final
 figure;
 plot(t_sim, vc_trunc, 'b', 'LineWidth', 1.5); hold on;
 plot(t_sim, ysim, 'r--', 'LineWidth', 1.5);
 legend('Medido: v_C(t)', 'Simulado: G(s)', 'Location', 'Southeast');
-%title('Comparación extendida: curva medida vs modelo estimado');
+%title('Comparaciï¿½n extendida: curva medida vs modelo estimado');
 xlabel('Tiempo [s]');
-ylabel('Tensión en el capacitor [V]');
+ylabel('Tensiï¿½n en el capacitor [V]');
 grid on;
 xlim([0 max(t_sim)]);
 %% Item [3]
 t = datos(:,1);         % Tiempo [s]
 i_meas = datos(:,2);    % Corriente [A]
-vc = datos(:,3);        % Tensión en el capacitor [V]
-vin = datos(:,4);       % Tensión de entrada [V]
+vc = datos(:,3);        % Tensiï¿½n en el capacitor [V]
+vin = datos(:,4);       % Tensiï¿½n de entrada [V]
 
-% Parámetros obtenidos con Chen (ítem 2)
+% Parï¿½metros obtenidos con Chen (ï¿½tem 2)
 R = 220.31; %para que coincida la grafica aumento levemente la resistencia
 L = 0.0004;
 C = 2.2e-06; 
 
-% Calcular ganancia real desde la respuesta al escalón
-% Detectar inicio del escalón
+% Calcular ganancia real desde la respuesta al escalï¿½n
+% Detectar inicio del escalï¿½n
 idx_escalon = find(abs(diff(vin)) > 5, 1);
 vc_rel = vc(idx_escalon:end);
 
 K_real = max(vc_rel);  % salida final real del sistema (aprox 12?V)
 
-% Función de transferencia con ganancia corregida
+% Funciï¿½n de transferencia con ganancia corregida
 num = [K_real];
 den = [L*C R*C 1];
 G = tf(num, den);
@@ -186,12 +186,12 @@ t_crop = t(idx_inicio:end);
 i_sim_crop = i_sim(idx_inicio:end);
 i_meas_crop = i_meas(idx_inicio:end);
 
-% Graficar comparación
+% Graficar comparaciï¿½n
 figure;
 plot(t_crop, i_meas_crop, 'b', 'LineWidth', 1.4); hold on;
 plot(t_crop, i_sim_crop, 'r--', 'LineWidth', 1.4);
 xlabel('Tiempo [s]');
 ylabel('Corriente i(t) [A]');
 legend('Corriente medida (Excel)', 'Corriente simulada (modelo RLC)');
-title('Comparación: Corriente simulada vs medida desde t = 0.05 s');
+title('Comparaciï¿½n: Corriente simulada vs medida desde t = 0.05 s');
 grid on;
