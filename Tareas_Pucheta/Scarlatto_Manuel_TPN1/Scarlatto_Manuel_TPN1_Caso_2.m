@@ -163,17 +163,17 @@ plot(t_t1, y_t1, 'xb');
 plot(t_2t1, y_2t1, 'xb');
 plot(t_3t1, y_3t1, 'xb');
 legend('Velocidad angular original', 'Velocidad angular identificada', 'Puntos de muestreo');
-%% �tem [6] - Control PID
-% Par�metros de la funci�n de transferencia identificada
-num_calc = 0.2656;
-den_calc = [6.5615e-4, 17.1985e-3, 0.0705];
-G = tf(num_calc, den_calc);
+%% Item [6] - Control PID
+% Parametros de la funcion de transferencia identificada
+% num_calc = 0.2656;
+% den_calc = [6.5615e-4, 17.1985e-3, 0.0705];
+% G = tf(num_calc, den_calc);
 
 % Tiempo de muestreo
 Ts = 0.01; % segundos
 
 % Discretizaci�n de la planta
-Gd = c2d(G, Ts, 'tustin');
+Gd = c2d(Gcalc, Ts, 'tustin');
 
 % Par�metros del controlador PID
 Kp = 0.1;
@@ -181,22 +181,21 @@ Ki = 0.01; % Tiempo integral en segundos
 Kd = 5; % Tiempo derivativo en segundos
 N = 10;   % Divisor del filtro derivativo
 
-% Creaci�n del controlador PID en forma est�ndar y tiempo discreto
+% Creacion del controlador PID en forma estondar y tiempo discreto
 C = pidstd(Kp, Ki, Kd, N, Ts, 'IFormula', 'Trapezoidal', 'DFormula', 'BackwardEuler');
 
 % Sistema en lazo cerrado
 T = feedback(C * Gd, 1);
 
-% Simulaci�n de la respuesta al escal�n
+% Simulacion de la respuesta al escalon
 t = 0:Ts:5; % Tiempo de simulaci�n de 5 segundos
 [y, t_out] = step(T, t);
 
-% Gr�fica de la respuesta
+% Grafica de la respuesta
 figure;
 plot(t_out, y, 'b', 'LineWidth', 1.5);
 grid on;
 xlabel('Tiempo (s)');
-ylabel('�ngulo (rad)');
-title('Respuesta al escal�n del sistema en lazo cerrado');
+ylabel('Angulo (rad)');
+title('Respuesta al escalon del sistema en lazo cerrado');
 legend('Salida del sistema');
-
