@@ -24,7 +24,7 @@ Datos indicados para la realización del trabajo:
 
 | Polo1 | Polo2 | Cero | Ganancia | Sobrepaso | Tiempo 2% | Error | Tiempo Muestreo |
 |-------|-------|------|----------|-----------|-----------|-------|-----------------|
-| -2    | -1    | -10  | 5        | 5         | 4         | 0     | 0.30            |
+| -3    | -1    | -10  | 10        | 5         | 2         | 0     | 0.15            |
 
 ---
 
@@ -34,19 +34,19 @@ Datos indicados para la realización del trabajo:
 
 $$\xi = \frac{-\ln(S/100)}{\sqrt{\pi^2 + \ln(S/100)^2}}=\frac{-\ln(5/100)}{\sqrt{(\pi^2+\ln(5/100)^2)}} = 0.6901$$
 
-$$ω₀ = 4 / (ξ * tᵣ(2\%)) = 4 / (0.6901 * 4) = 1.4491$$
+$$ω₀ = 4 / (ξ * tᵣ(2\%)) = 4 / (0.6901 * 2) = 2.8981$$
 
-$$\omega_d = \omega_o*\sqrt{1-\xi^2} = 1.0487$$
+$$\omega_d = \omega_o*\sqrt{1-\xi^2} = 2.0974$$
 
 - Código de Matlab
 
 ```
-%Datos de la Tarea
-z1=-10; p1=-2; p2=-1; K=5; S=5; Tr=4; Tm=0.30;
+%% Datos de la Tarea
+z1=-10; p1=-3; p2=-1; K=10; S=5; Tr=2; Tm=0.15;
 %Obtener los valores de Z, Wo y Wd
-Z=(-log(S/100))/sqrt(pi^(2)+log(S/100)^(2))
-Wo=4/(Z*Tr)
-Wd=Wo*sqrt(1-Z^2)
+Xi=(-log(S/100))/sqrt(pi^(2)+log(S/100)^(2))
+Wo=4/(Xi*Tr)
+Wd=Wo*sqrt(1-Xi^2)
 ```
 
 - Resultados obtenidos con Matlab
@@ -54,9 +54,11 @@ Wd=Wo*sqrt(1-Z^2)
 ```
 Xi = 0.6901
 
-Wo = 1.4491
 
-Wd = 1.0487
+Wo = 2.8981
+
+
+Wd = 2.0974
 ```
 ---
 
@@ -66,23 +68,23 @@ Wd = 1.0487
 
     - Para ello, primero obtenemos $t_d$
 
-      $$t_d = \frac{2\pi}{\omega_d} = \frac{2\pi}{1.0487} = 5.9914$$
+      $$t_d = \frac{2\pi}{\omega_d} = \frac{2\pi}{2.0974} = 2.9957$$
 
     - Por lo tanto, las muestras por ciclo son:
 
-      $$m = \frac{t_d}{T_m} = \frac{5.9914}{0.30} = 19.97 $$
+      $$m = \frac{t_d}{T_m} = \frac{2.9957}{0.15} = 19.9713 $$
 
 - Código de Matlab
 
 ```
-%Datos de la Tarea
-z1=-10; p1=-2; p2=-1; K=5; S=5; Tr=4; Tm=0.30;
+%% Datos de la Tarea
+z1=-10; p1=-3; p2=-1; K=10; S=5; Tr=2; Tm=0.15;
 %Obtener los valores de Z, Wo y Wd
 Xi=(-log(S/100))/sqrt(pi^(2)+log(S/100)^(2))
 Wo=4/(Xi*Tr)
 Wd=Wo*sqrt(1-Xi^2)
+%% Cantidad de Muestras por ciclo de la frecuencia amortiguada Wd
 Td=2*pi/Wd
-%Cantidad de Muestras por ciclo de la frecuencia amortiguada Wd
 m=Td/Tm
 ```
 
@@ -98,21 +100,21 @@ m = 19.9715
 
 $$r = |z_{1,2}| = e^{-\xi*\omega_o*T_m} = 0.7408$$
 
-$$\Omega = ∠z_{1,2} = \pm \omega_d*T_m = \pm 0.3146 = 18.0258 ° $$
+$$\Omega = ∠z_{1,2} = \pm \omega_d*T_m = \pm 0.3146 = 18.0256 ° $$
 
 - Código de Matlab
 
 ```
-%Datos de la Tarea
-z1=-10; p1=-2; p2=-1; K=5; S=5; Tr=4; Tm=0.30;
+%% Datos de la Tarea
+z1=-10; p1=-3; p2=-1; K=10; S=5; Tr=2; Tm=0.15;
 %Obtener los valores de Z, Wo y Wd
 Xi=(-log(S/100))/sqrt(pi^(2)+log(S/100)^(2))
 Wo=4/(Xi*Tr)
 Wd=Wo*sqrt(1-Xi^2)
+%% Cantidad de Muestras por ciclo de la frecuencia amortiguada Wd
 Td=2*pi/Wd
-%Cantidad de Muestras por ciclo de la frecuencia amortiguada Wd
 m=Td/Tm
-%Equivalencias de planos s y z
+%% Equivalencias de planos s y z
 r=exp(-Xi*Wo*Tm)
 Omega=(Wd*Tm)*(180/pi)
 ```
@@ -120,11 +122,12 @@ Omega=(Wd*Tm)*(180/pi)
 ```
 r = 0.7408
 
+
 Omega = 18.0256
 ```
 Pasando a coordenadas rectangulares
 
-$$polo_{deseado}= 0.7045 \pm j 0.2289$$
+$$polo_{deseado}= 0.5033 \pm j 0.5436$$
 
 ---
 
@@ -135,23 +138,23 @@ $$polo_{deseado}= 0.7045 \pm j 0.2289$$
 - Código de Matlab
 
 ```
-%Datos de la Tarea
-z1=-10; p1=-2; p2=-1; K=5; S=5; Tr=4; Tm=0.30;
+%% Datos de la Tarea
+z1=-10; p1=-3; p2=-1; K=10; S=5; Tr=2; Tm=0.15;
 %Obtener los valores de Z, Wo y Wd
 Xi=(-log(S/100))/sqrt(pi^(2)+log(S/100)^(2))
 Wo=4/(Xi*Tr)
 Wd=Wo*sqrt(1-Xi^2)
+%% Cantidad de Muestras por ciclo de la frecuencia amortiguada Wd
 Td=2*pi/Wd
-%Cantidad de Muestras por ciclo de la frecuencia amortiguada Wd
 m=Td/Tm
-%Equivalencias de planos s y z
+%% Equivalencias de planos s y z
 r=exp(-Xi*Wo*Tm)
 Omega=(Wd*Tm)*(180/pi)
 %Coordenadas rectangulares
 real_part=r*cos(Omega)
 imag_part=r*sin(Omega)
 R=real_part+j*imag_part
-%Funciones de Transferencias, Sisotool
+%% Funciones de Transferencias, Sisotool
 G=zpk([z1],[p1 p2],[K])    %FT de tiempo continuo G(s)
 Gd=c2d(G,Tm,'zho')         %FT de tiempo discreto Gd(s)
 sisotool(Gd)
@@ -159,42 +162,43 @@ sisotool(Gd)
 
 - Función de transferencia tiempo continuo G(s)
 
-``` 
-     5 (s+10)
-G = -----------
-    (s+2) (s+1)
+```  
+      10 (s+10)
+G =  -----------
+     (s+3) (s+1)
 ```
 
 - Función de transferencia tiempo discreto $G_D$(s)
 
 ``` 
-       2.6394 (z+0.1076)
-Gd = ---------------------
-     (z-0.7408) (z-0.5488)
+        2.0405 (z-0.1754)
+Gd =  ---------------------
+      (z-0.8607) (z-0.6376)
 ```
 
 - Respuesta al escalon del sistema discreto ($G_D$)
 
-![alt text](<Imagenes Tarea 2/Respuesta_al_Escalon.jpg>)
+![Rta_al_Escalon](<Imagenes Tarea 2/Rta_al_Escalon.png>)
+
 
 - Lugar de Raices del sistema discreto ($G_D$)
 
-![alt text](<Imagenes Tarea 2/Lugar_de_Raices.jpg>)
+![Lugar_de_Raices](<Imagenes Tarea 2/Lugar_de_Raices.png>)
 
 - Diagrama de Bode del sistema discreto ($G_D$)
 
-![alt text](<Imagenes Tarea 2/Diagrama_de_Bode.jpg>)
+![Diagrama_de_Bode](<Imagenes Tarea 2/Diagrama_de_Bode.png>)
 
-En la respuesta al escalon podemos observar que el sistema es estable, pero se observa que el sobrepaso es del 174 % y el requerido es del 4 %. En cuanto al LR se puede observar que el sistema se encuentra dentro del circulo unitario. 
+En la respuesta al escalon podemos observar que el sistema es estable, pero se observa que el sobrepaso es del 110 % y el requerido es del 5 %. En cuanto al LR se puede observar que el sistema se encuentra dentro del circulo unitario. 
 
 Se diseña entonces un controlador PI, dado que el sistema no poseé un polo en 1, por lo tanto se fija un polo en 1 y se agrega un cero ajustable. Luego se genera un controlador en adelanto y se compararan los resultados.
 
 Entonces, siguiendo los requerimientos planteados en un comienzo:
 
 $$\xi = 0.6901$$
-$$t_R(2 \%) = 4$$
+$$t_R(2 \%) = 5$$
 
-![alt text](<Imagenes Tarea 2/Lugar_de_Raices_Xi_Tr.jpg>)
+![Lugar_de_Raices_Xi_Tr](<Imagenes Tarea 2/Lugar_de_Raices_Xi_Tr.png>)
 
 ### Controlador PI
 
@@ -204,19 +208,19 @@ El controlador PI tiene la forma:
 
 $$C(z)=K*\frac{z-c}{z-1}; K=K_p+K_i; c=\frac{K_p}{K_p+K_i}$$ 
 
-![alt text](<Imagenes Tarea 2/Compensador.jpg>)
+![Compensador](<Imagenes Tarea 2/Compensador.png>)
 
-![alt text](<Imagenes Tarea 2/Lugar_de_Raices_PI.jpg>)
+![Lugar_de_Raices_PI](<Imagenes Tarea 2/Lugar_de_Raices_PI.png>)
 
-![alt text](<Imagenes Tarea 2/Respuesta_al_Escalon_PI.jpg>)
+![Respuesta_al_Escalon_PI](<Imagenes Tarea 2/Respuesta_al_Escalon_PI.png>)
 
 Como podemos observar, con el cero ajustable se cancelo el polo en 0.74 y luego se ajusto la ganancia a la altura de las intersecciones. Podemos ver a su vez, como la respuesta al escalon mejor y se amolda a los parametros solicitados.
 
 Ahora se exporta el compensador C y se contruye el sistema a lazo cerrado.
 
 ```
-     0.045631 (z-0.7408)
-C = --------------------
+     0.022014 (z-0.795)
+C =  ------------------
           (z-1)
 ```
 
@@ -234,14 +238,14 @@ step(F) % respuesta al escalon
 - Función a Lazo Cerrado
 
 ```
-      0.12044 (z-0.7408) (z+0.1076)
-F = ----------------------------------
-    (z-0.7408) (z^2 - 1.428z + 0.5618)
+      0.04492 (z-0.795) (z-0.1754)
+F =  --------------------------------
+     (z-0.683) (z^2 - 1.77z + 0.7944)
 ```
 
 - Respuesta al escalon - Sistema a Lazo Cerrado
 
-![alt text](<Imagenes Tarea 2/Respuesta_al_Escalon_PI_LC.jpg>)
+![Respuesta_al_Escalon_PI_LC](<Imagenes Tarea 2/Respuesta_al_Escalon_PI_LC.png>)
 
 Se observa que el sistema se asemeja al calculado.
 
@@ -250,9 +254,9 @@ pole(F)
 
 ans =
 
-   0.7142 + 0.2274i
-   0.7142 - 0.2274i
-   0.7408 + 0.0000i
+   0.6830 + 0.0000i
+   0.8852 + 0.1038i
+   0.8852 - 0.1038i
 ```
 
 ```
@@ -260,11 +264,11 @@ zero(F)
 
 ans =
 
-    0.7408
-   -0.1076
+    0.7950
+    0.1754
 ```
 
-![alt text](<Imagenes Tarea 2/Pole_Zero_Map_LC.jpg>)
+![Pole_Zero_Map_LC](<Imagenes Tarea 2/Pole_Zero_Map_LC.png>)
 
 Recordando la función de transferencia del controlador PI:
 
@@ -272,23 +276,23 @@ $$C(z)=K*\frac{z-c}{z-1}; K=K_p+K_i; c=\frac{K_p}{K_p+K_i}$$
 
 Tenemos que 
 
-$$C(z)=K*\frac{z-c}{z-1}=0.045631*\frac{z-0.7408}{z-1}$$
+$$C(z)=K*\frac{z-c}{z-1}=0.022014*\frac{z-0.795}{z-1}$$
 
 Donde, 
 
-$$K=K_p+K_i=0.045631$$ 
+$$K=K_p+K_i=0.022014$$ 
 
 y 
 
-$$c=\frac{K_p}{K_p+K_i}=0.7408$$
+$$c=\frac{K_p}{K_p+K_i}=0.795$$
 
 Teniendo dos ecuaciones con dos incognitas, resolviendo las mismas, se obtienen los valores de $K_p$ y $K_i$.
 
-$$K_p=c*K=0.7408*0.045631=0.0338$$
+$$K_p=c*K=0.795*0.022014=0.0175$$
 
-$$K_i=K-K_p=0.045631-0.0338=0.0118$$
+$$K_i=K-K_p=0.022014-0.0175=0.0045$$
 
-$$K_p=0.0338; K_i=0.0118$$
+$$K_p=0.0175; K_i=0.0045$$
 
 - Simulación en Simulink
 
