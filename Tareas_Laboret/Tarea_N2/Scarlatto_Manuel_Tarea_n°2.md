@@ -298,15 +298,15 @@ $$K_p=0.0175; K_i=0.0045$$
 
 Una vez obtenidos los valores del controlador, pasamos a simular el sistema en Simulink, a partir del archivo 'PID_digital_tarea.slx'.
 
-![alt text](<Imagenes Tarea 2/Simulink_Diagrama.jpg>)
+![alt text](<Imagenes Tarea 2/Simulink_Diagrama.png>)
 
 Una vez abierto el archivo, ponemos en cero el $K_d$ ya que no es un controlador derivativo, y cargamos los valores previamente calculados a $K_p$ y $K_i$:
 
-![alt text](<Imagenes Tarea 2/Parametros_K.jpg>)
+![alt text](<Imagenes Tarea 2/Parametros_K.png>)
 
 Luego configuramos la funcion de transferencia:
 
-![alt text](<Imagenes Tarea 2/Parametros_FT.jpg>)
+![alt text](<Imagenes Tarea 2/Parametros_FT.png>)
 
 Se configura el Step y los ZOH.
 
@@ -314,18 +314,18 @@ Al simular el sistema, obtenemos los siguientes resultados:
 
 - Salida del Sistema con Controlador PI
 
-![alt text](<Imagenes Tarea 2/Simulink_Out.jpg>)
+![alt text](<Imagenes Tarea 2/Simulink_Out_PI.png>)
 
 - Gráfica del Error
 
-![alt text](<Imagenes Tarea 2/Simulink_Out_Error.jpg>)
+![alt text](<Imagenes Tarea 2/Simulink_Out_Error_PI.png>)
 
 - Gráfica de la acción integradora
 
-![alt text](<Imagenes Tarea 2/Simulink_Out_Int.jpg>)
+![alt text](<Imagenes Tarea 2/Simulink_Out_Integrador_PI.png>)
 
 - Gráfica de la acción proporcional
 
-![alt text](<Imagenes Tarea 2/Simulink_Out_Prop.jpg>)
+![alt text](<Imagenes Tarea 2/Simulink_Out_Prop_PI.png>)
 
 ---

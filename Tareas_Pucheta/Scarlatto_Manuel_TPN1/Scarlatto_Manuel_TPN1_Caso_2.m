@@ -89,7 +89,7 @@ t_tot = xlsread(archivo, hoja, rango_tot1);
 w_tot = xlsread(archivo, hoja, rango_tot2);
 i_tot = xlsread(archivo, hoja, rango_tot3);
 
-% Escalï¿½n de amplitud 2V
+% Escalon de amplitud 2V
 opt = stepDataOptions;
 opt.StepAmplitude = 2;
 K = w_parcial(end) / opt.StepAmplitude;
@@ -115,7 +115,7 @@ y_3t1 = w_parcial(lugar);
 ii = 0; 
 ii = ii + 1;
 
-% Cï¿½lculo de parï¿½metros (Chen)
+% Calculo de parametros (Chen)
 k1 = (1 / opt.StepAmplitude) * y_t1 / K - 1; 
 k2 = (1 / opt.StepAmplitude) * y_2t1 / K - 1;
 k3 = (1 / opt.StepAmplitude) * y_3t1 / K - 1;
@@ -134,14 +134,14 @@ T3_ang = sum(T3 / length(T3));
 T2_ang = sum(T2 / length(T2));
 T1_ang = sum(T1 / length(T1));
 
-% Funciï¿½n de transferencia identificada
+% Funcion de transferencia identificada
 num = [T3_ang 1];
 den = conv([T1_ang 1], [T2_ang 1]);
 disp('Funcion de transferencia identificada')
 sys_G_ang = tf(K * num, den);
 [y_ang, t_ang] = step(sys_G_ang, opt, t_sim);
 
-% Grï¿½fica de ia
+% Grafica de ia
 figure(1);
 hold on;
 plot(t_tot, i_tot, 'b'); grid on;
@@ -154,7 +154,7 @@ den_calc = [6.5615e-4 17.1985e-3 0.0705];
 Gcalc = tf(num_calc, den_calc);
 [y_calc, t_calc] = step(Gcalc, opt, t_sim);
 
-% Grï¿½fica de velocidad angular (sin la curva calculada)
+% Grafica de velocidad angular (sin la curva calculada)
 figure(2);
 plot(t_parcial, w_parcial, 'b'); grid on; hold on;
 plot(t_ang + t_ret, y_ang, 'g'); hold on;
@@ -163,39 +163,87 @@ plot(t_t1, y_t1, 'xb');
 plot(t_2t1, y_2t1, 'xb');
 plot(t_3t1, y_3t1, 'xb');
 legend('Velocidad angular original', 'Velocidad angular identificada', 'Puntos de muestreo');
-%% Item [6] - Control PID
-% Parametros de la funcion de transferencia identificada
-% num_calc = 0.2656;
-% den_calc = [6.5615e-4, 17.1985e-3, 0.0705];
-% G = tf(num_calc, den_calc);
 
-% Tiempo de muestreo
-Ts = 0.01; % segundos
+%% Item [6]
+% close all; clear; clc;
+% Planta identificada (Chen)
+num = 0.2656;
+den = [6.5615e-4, 17.1985e-3, 0.0705];
+G = tf(num, den);
 
-% Discretizaciï¿½n de la planta
-Gd = c2d(Gcalc, Ts, 'tustin');
+% Cargar datos reales desde Excel
+filename = 'Curvas_Medidas_Motor_2025_v.xls';
+TL_data = xlsread(filename, 'Hoja1', 'E1:E1500');   % torque medido
+t_real = xlsread(filename, 'Hoja1', 'A1:A1500');    % tiempo real
+Ts = t_real(2) - t_real(1);                         % paso de muestreo real
+t = t_real;                                         % usamos exactamente ese tiempo
 
-% Parï¿½metros del controlador PID
-Kp = 0.1;
-Ki = 0.01; % Tiempo integral en segundos
-Kd = 5; % Tiempo derivativo en segundos
-N = 10;   % Divisor del filtro derivativo
+% Discretización de la planta (Tustin)
+Gd = c2d(G, Ts, 'tustin');
 
-% Creacion del controlador PID en forma estondar y tiempo discreto
+% Valores iniciales sugeridos en el enunciado (sin perturbación):
+% Kp = 0.1;
+% Ki = 0.01;
+% Kd = 5;
+% Estos valores funcionaban correctamente cuando el sistema
+% no estaba afectado por el torque de carga T_L(t).
+
+% Controlador PID ajustado para referencia de 1 rad
+Kp = 2;
+Ki = 5;
+Kd = 0.1;
+N = 10;
+
 C = pidstd(Kp, Ki, Kd, N, Ts, 'IFormula', 'Trapezoidal', 'DFormula', 'BackwardEuler');
 
-% Sistema en lazo cerrado
-T = feedback(C * Gd, 1);
+% Entrada de referencia: escalón unitario
+r = ones(size(t));
 
-% Simulacion de la respuesta al escalon
-t = 0:Ts:5; % Tiempo de simulaciï¿½n de 5 segundos
-[y, t_out] = step(T, t);
+% Inicialización de variables
+y = zeros(size(t));
+e = zeros(size(t));
+u = zeros(size(t));
+e_prev = 0; I = 0; D = 0;
 
-% Grafica de la respuesta
+% Estado de la planta discreta
+[A,B,Cd,Dd] = ssdata(Gd);
+x = zeros(size(A,1),1);
+
+% Simulación discreta con torque real
+for k = 2:length(t)
+    e(k) = r(k) - y(k-1);
+
+    % PID
+    I = I + (e(k) + e_prev)/2 * Ts;
+    D = (e(k) - e_prev)/Ts;
+    u(k) = Kp*e(k) + Ki*I + Kd*D;
+    e_prev = e(k);
+
+    % Saturación
+    u(k) = max(min(u(k), 24), -24);
+
+    % Torque real como perturbación negativa
+    u_total = u(k) - TL_data(k);
+
+    % Dinámica
+    x = A*x + B*u_total;
+    y(k) = Cd*x + Dd*u_total;
+end
+
+% Gráficas
 figure;
-plot(t_out, y, 'b', 'LineWidth', 1.5);
+
+subplot(2,1,1);
+plot(t, y, 'b', 'LineWidth', 1.2); hold on;
+plot(t, r, '--k');
+ylabel('\theta [rad]');
+title('Respuesta angular con PID discreto (tiempo real de Excel)');
+legend('Salida del sistema', 'Referencia');
 grid on;
-xlabel('Tiempo (s)');
-ylabel('Angulo (rad)');
-title('Respuesta al escalon del sistema en lazo cerrado');
-legend('Salida del sistema');
+
+subplot(2,1,2);
+plot(t, TL_data, 'k', 'LineWidth', 1.2);
+ylabel('T_L [Nm]');
+xlabel('Tiempo [s]');
+title('Torque de carga real aplicado');
+grid on;
