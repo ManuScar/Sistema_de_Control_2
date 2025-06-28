@@ -191,22 +191,26 @@ Gd =  ---------------------
 
 En la respuesta al escalon podemos observar que el sistema es estable, pero se observa que el sobrepaso es del 110 % y el requerido es del 5 %. En cuanto al LR se puede observar que el sistema se encuentra dentro del circulo unitario. 
 
-Se diseña entonces un controlador PI, dado que el sistema no poseé un polo en 1, por lo tanto se fija un polo en 1 y se agrega un cero ajustable. Luego se genera un controlador en adelanto y se compararan los resultados.
+Por otro lado, el análisis del Lugar Geométrico de las Raíces (LR) muestra que todos los polos del sistema en lazo cerrado se encuentran dentro del círculo unitario, lo que confirma la estabilidad del sistema en tiempo discreto.
+
+Con el fin de mejorar la respuesta transitoria, se diseña un controlador PD discreto. Este tipo de compensador permite modificar la ubicación de los polos dominantes mediante la introducción de un cero, sin alterar el tipo del sistema. El controlador se ajusta para que el LR atraviese la región deseada del plano-z, de acuerdo con las especificaciones de sobrepaso y tiempo de establecimiento.
+
+Posteriormente, se analizará un segundo diseño que incluya acción integradora (como un PID o un controlador por adelanto con integración) para garantizar error nulo en régimen, y se compararán los resultados obtenidos con el controlador PD.
 
 Entonces, siguiendo los requerimientos planteados en un comienzo:
 
-$$\xi = 0.6901$$
-$$t_R(2 \%) = 5$$
+$$ \xi = 0.6901 $$
+$$ t_R(2 \%) = 2 $$
 
 ![Lugar_de_Raices_Xi_Tr](<Imagenes Tarea 2/Lugar_de_Raices_Xi_Tr.png>)
 
-### Controlador PI
+### Controlador PD
 
-Con los parametros ya fijados, se agrega el polo en 1 y el cero ajustable, se ajusta el cero para que la ganacia pueda tomar el valor que pase a traves de la intersección. Luego se ajusta la ganancia al punto exacto de la intersección.
+Con los parametros ya fijados, se agrega el polo en 0 y el cero ajustable, se ajusta el cero para que la ganacia pueda tomar el valor que pase a traves de la intersección. Luego se ajusta la ganancia al punto exacto de la intersección.
 
-El controlador PI tiene la forma:
+El controlador PD tiene la forma:
 
-$$C(z)=K*\frac{z-c}{z-1}; K=K_p+K_i; c=\frac{K_p}{K_p+K_i}$$ 
+$$C(z)=K*\frac{z-c}{z}; K=K_p+K_d; c=\frac{K_d}{K_p+K_d}$$ 
 
 ![Compensador](<Imagenes Tarea 2/Compensador.png>)
 
@@ -214,14 +218,14 @@ $$C(z)=K*\frac{z-c}{z-1}; K=K_p+K_i; c=\frac{K_p}{K_p+K_i}$$
 
 ![Respuesta_al_Escalon_PI](<Imagenes Tarea 2/Respuesta_al_Escalon_PI.png>)
 
-Como podemos observar, con el cero ajustable se cancelo el polo en 0.74 y luego se ajusto la ganancia a la altura de las intersecciones. Podemos ver a su vez, como la respuesta al escalon mejor y se amolda a los parametros solicitados.
+Como se puede observar, se ha incorporado un controlador PD discreto con un cero ubicado en 𝑧 = − 0.396, lo que permite modificar la forma del lugar geométrico de las raíces. De esta manera, se logró aproximar los polos dominantes del sistema en lazo cerrado a la región deseada del plano-z, cumpliendo con las especificaciones dinámicas establecidas.
 
-Ahora se exporta el compensador C y se contruye el sistema a lazo cerrado.
+Posteriormente, se ajustó la ganancia del sistema hasta que los polos se ubicaron en la intersección con la curva de diseño. Como resultado, la respuesta al escalón mejora considerablemente, mostrando un sobrepaso y un tiempo de establecimiento acordes con los valores requeridos.
 
 ```
-     0.022014 (z-0.795)
-C =  ------------------
-          (z-1)
+    0.037654 (z+0.396)
+C = ------------------
+            z
 ```
 
 - Código de Matlab
@@ -237,10 +241,10 @@ step(F) % respuesta al escalon
 
 - Función a Lazo Cerrado
 
-```
-      0.04492 (z-0.795) (z-0.1754)
-F =  --------------------------------
-     (z-0.683) (z^2 - 1.77z + 0.7944)
+``` 
+      0.076831 (z+0.396) (z-0.1754)
+F = ------------------------------------
+    (z-0.009667) (z^2 - 1.412z + 0.5521)
 ```
 
 - Respuesta al escalon - Sistema a Lazo Cerrado
@@ -254,9 +258,9 @@ pole(F)
 
 ans =
 
-   0.6830 + 0.0000i
-   0.8852 + 0.1038i
-   0.8852 - 0.1038i
+   0.0097 + 0.0000i
+   0.7059 + 0.2319i
+   0.7059 - 0.2319i
 ```
 
 ```
@@ -264,45 +268,43 @@ zero(F)
 
 ans =
 
-    0.7950
-    0.1754
+    -0.3960
+     0.1754
 ```
 
 ![Pole_Zero_Map_LC](<Imagenes Tarea 2/Pole_Zero_Map_LC.png>)
 
-Recordando la función de transferencia del controlador PI:
+Recordando la función de transferencia del controlador PD:
 
-$$C(z)=K*\frac{z-c}{z-1}; K=K_p+K_i; c=\frac{K_p}{K_p+K_i}$$ 
+$$C(z)=K*\frac{z-c}{z}; K=K_p+K_d; c=\frac{K_d}{K_p+K_d}$$
 
 Tenemos que 
 
-$$C(z)=K*\frac{z-c}{z-1}=0.022014*\frac{z-0.795}{z-1}$$
+$$C(z)=K*\frac{z-c}{z}=0.037654*\frac{z+0.396}{z}$$
 
-Donde, 
+Desarrollando la expresión y aplicando las relaciones estándar del controlador PD:
 
-$$K=K_p+K_i=0.022014$$ 
+$$
+K_d = b_1 \cdot T, \quad K_p = b_0 + \frac{K_d}{T}
+$$
 
-y 
+se obtuvieron:
 
-$$c=\frac{K_p}{K_p+K_i}=0.795$$
+$$
+K_p = 0.052565, \quad K_d = 0.005648
+$$
 
-Teniendo dos ecuaciones con dos incognitas, resolviendo las mismas, se obtienen los valores de $K_p$ y $K_i$.
-
-$$K_p=c*K=0.795*0.022014=0.0175$$
-
-$$K_i=K-K_p=0.022014-0.0175=0.0045$$
-
-$$K_p=0.0175; K_i=0.0045$$
+Ambos valores son positivos y válidos para una implementación física del controlador PD.
 
 - Simulación en Simulink
 
 Una vez obtenidos los valores del controlador, pasamos a simular el sistema en Simulink, a partir del archivo 'PID_digital_tarea.slx'.
 
-![alt text](<Imagenes Tarea 2/Simulink_Diagrama.png>)
+![Simulink_Diagrama](<Imagenes Tarea 2/Simulink_Diagrama.png>)
 
 Una vez abierto el archivo, ponemos en cero el $K_d$ ya que no es un controlador derivativo, y cargamos los valores previamente calculados a $K_p$ y $K_i$:
 
-![alt text](<Imagenes Tarea 2/Parametros_K.png>)
+![Parametros_K](<Imagenes Tarea 2/Parametros_K.png>)
 
 Luego configuramos la funcion de transferencia:
 
@@ -312,20 +314,24 @@ Se configura el Step y los ZOH.
 
 Al simular el sistema, obtenemos los siguientes resultados:
 
-- Salida del Sistema con Controlador PI
+- Salida del Sistema con Controlador PD
 
-![alt text](<Imagenes Tarea 2/Simulink_Out_PI.png>)
+![Simulink_Out_PD](<Imagenes Tarea 2/Simulink_Out_PD.png>)
 
 - Gráfica del Error
 
-![alt text](<Imagenes Tarea 2/Simulink_Out_Error_PI.png>)
+![Simulink_Out_Error_PD](<Imagenes Tarea 2/Simulink_Out_Error_PD.png>)
 
-- Gráfica de la acción integradora
+- Gráfica de la acción derivativa
 
-![alt text](<Imagenes Tarea 2/Simulink_Out_Integrador_PI.png>)
+![Simulink_Out_Derivador_PD](<Imagenes Tarea 2/Simulink_Out_Derivador_PD.png>)
 
 - Gráfica de la acción proporcional
 
-![alt text](<Imagenes Tarea 2/Simulink_Out_Prop_PI.png>)
+![Simulink_Out_Prop_PD](<Imagenes Tarea 2/Simulink_Out_Prop_PD.png>)
+
+### Conclusión del controlador PD
+
+El controlador PD diseñado logró mejorar significativamente la respuesta del sistema, reduciendo el sobrepaso y acelerando el tiempo de establecimiento. La salida presenta un comportamiento estable con bajo sobrepaso, y el error se reduce rápidamente, manteniéndose cercano a cero en régimen permanente. Esto confirma que el controlador cumple con los requisitos dinámicos planteados.
 
 ---
