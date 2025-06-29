@@ -214,9 +214,9 @@ $$C(z)=K*\frac{z-c}{z}; K=K_p+K_d; c=\frac{K_d}{K_p+K_d}$$
 
 ![Compensador](<Imagenes Tarea 2/Compensador.png>)
 
-![Lugar_de_Raices_PI](<Imagenes Tarea 2/Lugar_de_Raices_PI.png>)
+![Lugar_de_Raices_PD](<Imagenes Tarea 2/Lugar_de_Raices_PI.png>)
 
-![Respuesta_al_Escalon_PI](<Imagenes Tarea 2/Respuesta_al_Escalon_PI.png>)
+![Respuesta_al_Escalon_PD](<Imagenes Tarea 2/Respuesta_al_Escalon_PI.png>)
 
 Como se puede observar, se ha incorporado un controlador PD discreto con un cero ubicado en 𝑧 = − 0.396, lo que permite modificar la forma del lugar geométrico de las raíces. De esta manera, se logró aproximar los polos dominantes del sistema en lazo cerrado a la región deseada del plano-z, cumpliendo con las especificaciones dinámicas establecidas.
 
@@ -282,16 +282,10 @@ Tenemos que
 
 $$C(z)=K*\frac{z-c}{z}=0.037654*\frac{z+0.396}{z}$$
 
-Desarrollando la expresión y aplicando las relaciones estándar del controlador PD:
-
-$$
-K_d = b_1 \cdot T, \quad K_p = b_0 + \frac{K_d}{T}
-$$
-
 se obtuvieron:
 
 $$
-K_p = 0.052565, \quad K_d = 0.005648
+K_p = 0.022744, K_d = 0.001491
 $$
 
 Ambos valores son positivos y válidos para una implementación física del controlador PD.
@@ -302,13 +296,13 @@ Una vez obtenidos los valores del controlador, pasamos a simular el sistema en S
 
 ![Simulink_Diagrama](<Imagenes Tarea 2/Simulink_Diagrama.png>)
 
-Una vez abierto el archivo, ponemos en cero el $K_d$ ya que no es un controlador derivativo, y cargamos los valores previamente calculados a $K_p$ y $K_i$:
+Una vez abierto el archivo, ponemos en cero el $K_i$ ya que no es un controlador derivativo, y cargamos los valores previamente calculados a $K_p$ y $K_d$:
 
 ![Parametros_K](<Imagenes Tarea 2/Parametros_K.png>)
 
 Luego configuramos la funcion de transferencia:
 
-![alt text](<Imagenes Tarea 2/Parametros_FT.png>)
+![Parametros_FT](<Imagenes Tarea 2/Parametros_FT.png>)
 
 Se configura el Step y los ZOH.
 
@@ -333,5 +327,98 @@ Al simular el sistema, obtenemos los siguientes resultados:
 ### Conclusión del controlador PD
 
 El controlador PD diseñado logró mejorar significativamente la respuesta del sistema, reduciendo el sobrepaso y acelerando el tiempo de establecimiento. La salida presenta un comportamiento estable con bajo sobrepaso, y el error se reduce rápidamente, manteniéndose cercano a cero en régimen permanente. Esto confirma que el controlador cumple con los requisitos dinámicos planteados.
+
+### Controlador PID
+
+Con los parámetros ya fijados, se diseña un controlador PID agregando un polo en 1 (acción integrativa) y dos ceros ajustables. Estos ceros se colocan estratégicamente para que la ganancia del sistema pueda alcanzar el valor deseado en la intersección del lugar geométrico con el círculo especificado (de acuerdo con los requisitos de amortiguamiento y tiempo de respuesta).
+
+Una vez posicionados los ceros, se ajusta la ganancia K del controlador de manera que el polo dominante del sistema cerrado quede ubicado sobre la intersección deseada.
+
+El controlador PID tiene la siguiente forma general en tiempo discreto:
+
+$$C(z) = K\frac{(z - z_1)(z - z_2)}{z(z - 1)}$$
+
+![Compensador_PID](<Imagenes Tarea 2/Compensador_PID.png>)
+
+![Lugar_de_Raices_PID](<Imagenes Tarea 2/Lugar_de_Raices_PID.png>)
+
+![Respuesta_al_Escalon_PID](<Imagenes Tarea 2/Respuesta_al_Escalon_PID.png>)
+
+Como se puede observar, se ha incorporado un controlador PID, el cual incluye un polo 1 para introducir la acción integrativa, y dos ceros ajustables ubicados en z1 = 0.308 y z2 = 0.861, respectivamente. Esta estructura permite modificar la forma del LR y redirigir la trayectoria de los polos del sistema en lazo cerrado.
+
+Una vez fijados los ceros, se ajustó la ganancia K = 0.079 para colocar los polos sobre la intersección con la curva de diseño. Como resultado, la respuesta al escalón muestra una dinámica mucho más adecuada: el sobrepaso es de aproximadamente 5.58 %, lo cual está dentro de los márgenes especificados, y el tiempo de establecimiento es de 1.93 s, cumpliendo con los criterios de desempeño dinámico establecidos para el sistema.
+
+Exportamos el controlador, y obtenemos:
+
+```
+    0.11908 (z-0.3082) (z-0.8607)
+C = -----------------------------
+              z (z-1)
+```
+
+La función a LC nos queda:
+
+```
+      0.24298 (z-0.1754) (z-0.3082) (z-0.8607)
+F = ----------------------------------------------
+    (z+0.02372) (z-0.8608) (z^2 - 1.418z + 0.5537)
+```
+
+Siendo la respuesta al escalon:
+
+![Rta_Escalon_PID](<Imagenes Tarea 2/Rta_Escalon_PID.png>)
+
+Se observa que el sistema se asemeja al calculado.
+
+```
+pole(F)
+
+ans =
+
+  -0.0237 + 0.0000i
+   0.7092 + 0.2254i
+   0.7092 - 0.2254i
+   0.8608 + 0.0000i
+
+```
+```
+zero(F)
+
+ans =
+
+    0.1754
+    0.3082
+    0.8607
+```
+
+![Pole_Zero_Map_PID](<Imagenes Tarea 2/Pole_Zero_Map_PID.png>)
+
+Recordando la función de transferencia general del controlador PID en tiempo discreto:
+
+$$C(z) = K \frac{(z - z_1)(z - z_2)}{z(z - 1)} = 0.11908 \frac{(z-0.3082)(z-0.8607)}{z(z-1)}$$
+
+Luego:
+
+$$K = K_P + K_D + K_I$$
+$$z_1 + z_2 = b = \frac{K_P + 2*K_D}{K}$$
+$$z_1*z_2 = c = \frac{K_D}{K}$$
+
+Por lo tanto:
+
+$$K_D = 0.03159$$
+$$K_P = 0.07602$$
+$$K_I = 0.01148$$
+
+- Simulación en Simulink
+
+![Simulink_PID](<Imagenes Tarea 2/Simulink_PID.png>)
+
+Respuesta del sistema:
+
+![Simulink_Rta_PID](<Imagenes Tarea 2/Simulink_Rta_PID.png>)
+
+- Conclusión
+
+El controlador PID diseñado cumple con el tiempo de establecimiento requerido (1.93 s < 2 s), aunque en Simulink no presenta el sobrepaso del 5.58 % observado en la simulación teórica. Esta diferencia se debe a la implementación discreta del controlador, filtrado implícito en la acción derivativa y aproximaciones numéricas. Aun así, el sistema responde de forma estable y precisa, validando el diseño realizado.
 
 ---
