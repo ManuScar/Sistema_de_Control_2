@@ -438,5 +438,17 @@ yte=yout(ind(end)) % salida al tiempo ts
 uf=torque(end) % torque final
 Intf=-accint(end) % acción integral final
 ```
+---
+
+## Conclusiones
+
+A partir del desarrollo del trabajo práctico, se logró diseñar un sistema de control basado en realimentación de estados con acción integral para estabilizar un péndulo simple en la posición angular de referencia $\delta = 180°$. El análisis del sistema no lineal mostró que el equilibrio deseado era inestable, lo que justificó la necesidad de control.
+
+Mediante la linealización en torno al punto de equilibrio y la verificación de la controlabilidad del sistema ampliado, se pudo diseñar un controlador por asignación de polos utilizando la técnica `acker()`, ubicando un polo triple en $p = -3$, lo cual asegura una respuesta sin sobrepaso teórico y un tiempo de establecimiento cercano a 2.5 segundos.
+
+Las simulaciones en Simulink confirmaron el comportamiento deseado: el sistema logró estabilizarse en el valor de referencia sin error final, cumpliendo con el criterio de estabilidad y tiempo de respuesta. Además, el análisis de robustez frente a variaciones del parámetro de masa ($\pm 10\%$) demostró que el controlador mantiene el desempeño del sistema, con variaciones mínimas en el torque final y la acción integral, lo que valida la efectividad y robustez del diseño implementado.
+
+En resumen, se cumplió con éxito el objetivo de diseñar y analizar un sistema de control robusto para un péndulo no lineal, utilizando herramientas clásicas de control y simulación en MATLAB/Simulink.
+
 
 ---
