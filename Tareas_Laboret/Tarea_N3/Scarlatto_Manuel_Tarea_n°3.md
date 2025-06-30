@@ -28,7 +28,7 @@ Se dispondrá para cada alumno una tabla con valores de masa (m), longitud (1), 
 
 $$ml^2 \ddot{\theta} + b\dot{\theta} + mgl\sin(\theta) = T$$
 
-Se desea que el péndulo se estabilice en el ángulo \( \delta \) dado, tomando como estados, entrada y salida respectivamente (nótese que se ha desplazado el punto de equilibrio al origen, tomando el error como salida):
+Se desea que el péndulo se estabilice en el ángulo ( $\delta$ ) dado, tomando como estados, entrada y salida respectivamente (nótese que se ha desplazado el punto de equilibrio al origen, tomando el error como salida):
 
 
 

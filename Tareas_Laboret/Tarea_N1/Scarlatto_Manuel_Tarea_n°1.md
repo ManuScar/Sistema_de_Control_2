@@ -294,7 +294,7 @@ figure('Name', 'Lugar de Raices - FT Tiempo Discreto (10xTm)'),rlocus(Gd1);
 
 ![LR_FT_TC](Imagenes_TP1/LR_FT_TC.png)
 
-La gráfica muestra el lugar de raíces del sistema continuo G(s), con los polos iniciales en -2 y -1, y el cero en -10.
+La gráfica muestra el lugar de raíces del sistema continuo G(s), con los polos iniciales en -3 y -1, y el cero en -10.
 - Ganancia Crítica de Estabilidad:
   - En el sistema continuo, la estabilidad depende de que los polos permanezcan en el semiplano izquierdo (eje real negativo).
   - Ganancia Crítica: Infinita, ya que los polos siempre permanecen en el semiplano izquierdo.
@@ -307,7 +307,7 @@ La gráfica muestra el lugar de raíces del sistema discreto $G_D(s)$, con los p
 
 - Ganancia Crítica de Estabilidad:
   - En el sistema discreto, la estabilidad depende de que los polos permanezcan dentro del círculo unitario.
-  - Existe una ganancia crítica aproximadamente de 1.14, según los datos mostrados en la gráfica.
+  - Existe una ganancia crítica aproximadamente de 1.27, según los datos mostrados en la gráfica.
 
 ### ¿ Que ocurre con la estabilidad relativa si se aumenta 10 veces el tiempo de muestreo original ?
 
